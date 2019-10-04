@@ -1,0 +1,53 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{float}
+
+\input{commands.tex}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+	\Large{\textbf{Appunti di Sviluppo Software in Gruppi di Lavoro Complessi}}
+\vfill
+\normalsize{Caccaro Sebastiano}\\
+\normalsize{A.A.2019/2020}
+\end{center}
+\end{titlepage}
+
+
+\clearpage
+
+
+%Lezione di Giovedi 4 Ottobre 2019
+\lessonDate{4 Ottobre 2019}
+\section{Problemi dello sviluppo software}
+Lo sviluppo software presenta dei problemi intrinseci:
+\begin{itemize}
+\item \textbf{Non linearità del software}: Un errore molto piccolo può avere conseguenze catastrofiche
+\item Obiettivi poco chiari e mutabili
+\end{itemize}
+Questi problemi esistono tutt'oggi e sono difficilmente mitigabili. Esistono invece delle criticità che possono essere risolte.
+
+\definition{Legge di Brooks}{Aggiungere personale ad un progetto in ritardo lo farà solo ritardare.}
+
+Nello sviluppo software, non tutto è facilmente parallelizzabile. Non posso far nascere un bambino da 9 donne in un mese. Va da se che l'\textbf{effort} non corrisponde al \textbf{progress}. \`E molto facile stimare quanto si è lavorato, è meno facile misurare di quanto si è progredito, e questo può causare ulteriori ritardi. La soluzione non è aggiungere personale.
+
+\subsection{Modelli organizzativi}
+Un progetto deve mantenere sempre la sua \textbf{integrità concettuale}.\\
+Per far ciò Brooks propone i seguenti modelli:
+\begin{itemize}
+\item \textbf{Cattedrale}: Tenere rigorosamente separata progettazione e implementazione. L'implementatore deve quindi curarsi solamente di seguire quanto progettato. Si mantiene così la visione originale del progetto. Questo modello ha però il difetto di essere molto poco flessibile, e difetti nel progetto comportano problematiche enormi.
+\item \textbf{Sala operatoria:} Solamente il chirurgo (superbravo) si occupa di fare le cose importanti, gli altri nella sala fanno praticamente solo da assistente. Il vero lavoro viene svolto solamente dal chirurgo (una sola persona).
+\end{itemize}
+Questi modelli fanno però due grosse supposizioni:
+\begin{itemize}
+\item Che sia possibile accentare lo sforzo creativo in un'unica persona.
+\item Che sia possibile separare completamente progettazione e implementazione.
+\end{itemize}
+La maggior parte delle volte, tuttavia, queste supposizioni non si rivelano corrette.
+
+\subsection{Critiche}
+Eric Raymond contrappone il modello a \textbf{bazaar} (usato per lo sviluppo di Linux) contro la cattedrale di Brooks, osservando che il modello open source di Linux produca software di qualità, pur non usando i modelli proposti da brooks.
+
+
+\end{document}
