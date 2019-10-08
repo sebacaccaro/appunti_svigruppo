@@ -1,0 +1,13 @@
+%Comando per creare nuove definizioni stile blocco
+\newcommand{\definition}[2]{
+	\begin{table}[H]
+	\centering
+		\begin{tabular}{|p{0.9\linewidth}}
+		\textbf{#1}\\ %Titolo della definzione
+		#2\\%Testo della definizione
+		\end{tabular}
+	\end{table}
+}
+
+\input{insbox.tex}
+\newcommand{\lessonDate}[1]{\InsertBoxR{0}{\tiny{#1}}}

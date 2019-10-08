@@ -240,3 +240,16 @@ TSWLatexianTemp*
 
 # generated if using elsarticle.cls
 *.spl
+
+#webalgo
+Web\ Algorithmics/*
+
+#lecture_notes
+lectures-notes/*
+
+#Altri file
+Gestione\ dell\'informazione\ Geospaziale/Altri\ file/*
+Programmazione\ Avanzata/Altri\ file/*
+Svigruppo/Altri\ file/*
+
+

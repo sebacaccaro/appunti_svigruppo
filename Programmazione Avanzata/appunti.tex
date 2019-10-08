@@ -1,0 +1,127 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{float}
+\usepackage{url}
+
+
+
+\input{commands.tex}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+	\Large{\textbf{Appunti di Programmazione Avanzata}}
+\vfill
+\normalsize{Caccaro Sebastiano}\\
+\normalsize{A.A.2019/2020}
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+
+\clearpage
+
+
+%Lunedi 7 ottobre
+\lessonDate{7 Ottobre 2019}
+\section{Informazioni sul corso}
+\begin{itemize}
+	\item\textbf{Login:}pa\\
+	\item\textbf{Password:}PA+\#2009\#\\
+	\item\textbf{Sito del corso:} \url{cazzola.di.unimi.it/pa.html}\\
+\end{itemize}
+Libri e cose del genere sono presenti nelle slide. L'esame è scritto e si svolge al computer.
+
+\section{Python in breve}
+\E un linguaggio di scripting multi-paradigma, quindi imperativo, object-oriented, e funzionale. \E interpretato, \textbf{object-based} (=ogni cosa è un oggetto) e tipizzato dinamicamente.\\
+Nel corso si userà \textbf{Python 3}.
+
+\subsection{Osservazioni su humanize.py}
+\begin{itemize}
+	\item Le variabili non hanno un tipo statico. Il tipo dinamico è attaccato all'oggetto che contiene la variabile.
+	\item Supporta alcune strutture dati base di default. Ad esempio i dizionari (HashMap), liste ecc.
+	\item Si può indentare con i tab o con gli spazi, molto meglio con gli spazi.
+	\item Dopo la prima linea della funzione se commento con \texttt{``` commento ```}, posso fare un commento tipo javadoc.
+	\item Come in javascript, tutto è un oggetto, anche le funzioni. Anche i primitivi sono degli oggetti. Come in JS, posso passare le funzioni come parametri.
+	\item \texttt{\_\_name\_\_} assume il nome del file se viene importato come libreria, e assume il valore \texttt{\_\_main\_\_}
+	\item Ci sono le \textbf{format string} che sono un po' come le template string di Javascript e PHP. Dalla 3.5 in poi non serve nemmeno il .format.
+	\item Solo i tipi primitivi sono passati per valore, i tipi "complessi" sono passati per valore, quindi il contenuto è passato per riferimento.
+	\item Qualsiasi riga di codice non protetta da if o dentro funzioni verrà eseguita. Non esiste un main.
+\end{itemize}
+
+\subsection{Altre Caratteristiche}
+\begin{itemize}
+	\item La keyword import mi permette di importare da altri moduli. Se voglio accedere a una funzione o campo dati specifico, faccio modulo.funzione. Posso accedere alla doc di un oggetto con \texttt{oggetto.\_\_doc\_\_}.
+\end{itemize}
+
+\subsection{Eccezioni}
+Per lanciare un'eccezione si usa la keyworw \texttt{raise}. Si usano dei blocchi \texttt{try} - \texttt{except}.
+%Metto qua lo snippet.
+%\definition{Legge di Brooks}{Aggiungere personale ad un progetto in ritardo lo farà solo ritardare.}
+
+\subsection{Tipi di dato in Python}
+I tipi di Python funzionano come in javascript, dove il tipo è associato all'oggetto.
+Ci sono vari tipi numerici. Anche i primitivi sono oggetti istanze di classi. 
+
+\subsubsection{Numeri}
+Si usa, ad esempio la classe \texttt{int}. I primi numeri di Python, circa i primi 256, sono implementati tramite \textbf{singleton}.\\
+Alcuni comandi:
+\begin{itemize}
+	\item \texttt{type()} mi torna il tipo di una variabile
+	\item \texttt{isinstance()} controlla il tipo di una variabile.
+\end{itemize}
+Posso rappresentare qualsiasi intero fino a infinito. I float sono precisi fino a 15 cifre decimali. Qui ci sono alcuni operatori:
+\begin{itemize}
+	\item +, -
+	\item Altri da completare
+\end{itemize}
+
+\subsubsection{Liste}
+Sono trattate come degli array. Come javascript, posso avere più tipi di dato all'interno della stessa lista. Posso anche indicizzare al contrario. Esempio: \texttt{[-2]} accede al penultimo elemento della lista.\\
+L'operatore di \textbf{slicing} è il seguente \texttt{[x:y]} dove \texttt{x} è mantenuto e \texttt{y} escluso. Posso sempre usare gli indici negativi. Se ometto uno dei due indici parto dall'inizio/fine. Creo sempre un nuovo oggetto.\\
+Operatori:
+\begin{itemize}
+	\item \texttt{+}: Somma fra liste, creo un nuovo oggetto.
+	\item \texttt{append}: appende un elemento alla fine della lista
+	\item \texttt{extend:} aggiunge una lista ad un'altra lista
+	\item \texttt{insert:} @@@@@@@@@@@@@@@@@@
+	\item \texttt{in}: del tipo \texttt{if x in list}, torna true e false
+	\item \texttt{count} conta le istanze, in caso non ci sono, lancio eccezione
+	\item \texttt{del}: \texttt{del list[2]} rimuovo per posizione
+	\item \texttt{value}: \texttt{list.remove(3.13)} rimuove per valore
+\end{itemize}
+
+\subsubsection{Tuple}
+Sono delle liste immutabili. Si scrivono con le tonde, non con le graffe.\\
+Siccome non possono cambiare:
+\begin{itemize}
+ \item Sono più efficienti
+ \item Posso usarle come chiave in un dizionario
+\end{itemize}
+Posso usare più o meno le stesse operazioni sulle liste, apparte quelle che apportano modifiche. Posso usare per assegnazioni multiple a variabili (magari metto codice).
+
+\subsubsection{Sets (insiemi)}
+Struttura dati non ordinata con elementi univoci. Le creo come una lista ma con le graffe. Si crea set vuoto con \texttt{set()}. Posso anche crearli da una lista.
+Operatori:
+\begin{itemize}
+	\item \texttt{set.add} se possibile aggiunge un elemento al set
+	\item \texttt{set1.update(set2)} unisce due set nel primo set
+	\item \texttt{move discard}
+	\item \texttt{union, difference ecc.} Tutte le operazioni matematiche sugli insiemi sono implementati. Potrebbe essere necessario ridefinire l'uguaglianza.
+\end{itemize}
+
+\subsubsection{Dizionari}
+Insieme di coppie chiave-valore. La sintassi è praticamente quella del JSON. Sono praticamente delle HashMap. Il dizionario vuoto si scrive con \texttt{{}}. Sono disponibili i classici del ecc.
+
+\subsubsection{Stringe}
+Si comportano come le liste. Uso len per la lunghezza. Posso delimitare le stringe con \texttt{"}, \texttt{'} e \texttt{```}.\\
+Stringhe di formattazione, meglio che guardo la doc. \E simile a js e php, ma tipo printf del C. Esiste anche il comando Template. Ci sono un'infinità di operazioni.
+
+
+\subsection{Ricorsione}
+La ricorsione in Python non è ricorsiva in coda. Quindi insomma lol, potrebbe dare qualche problema. L'iterazione è più efficiente. In Python ho massimo 1000 ricorsioni. Posso aggirare il problema, ma la ricorsione in Python \textbf{fa cagare}.
+
+
+
+\end{document}

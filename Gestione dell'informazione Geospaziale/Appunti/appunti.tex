@@ -1,0 +1,107 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{float}
+\usepackage{url}
+
+\input{commands.tex}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+	\Large{\textbf{Gestione dell'informazione Geospaziale}}
+\vfill
+\normalsize{Caccaro Sebastiano}\\
+\normalsize{A.A.2019/2020}
+\end{center}
+\end{titlepage}
+\tableofcontents
+
+\clearpage
+
+
+%Lunedi 7 ottobre
+\lessonDate{7 Ottobre 2019}
+\section{Introduzione}
+\textbf{Geospaziale} tratta di dati sulla superficie terrestre. Posso trattare vari tipi di spazi, anche su unità di misura diverse, come lo spazio-tempo.
+
+\subsection{Aspetti organizzativi}
+\subsubsection{Obiettivi}
+Concetti base:
+\begin{itemize}
+	\item Acquisizione dei dati
+	\item Gestione dei dati: li mantengo in dei DBMS spaziali.
+	\item Analisi dei dati, clustering (= raggruppare oggetti in base a criteri di omogeneità) ecc.
+\end{itemize}
+
+\subsubsection{Organizzazione del corso}
+Il corso verrà così articolato:
+\begin{itemize}
+	\item Concetti base
+	\item DBMS Spaziali
+	\item Rappresentazione di oggetti in movimento
+	\item Analisi dei dati spaziali.	
+\end{itemize}
+
+\textbf{Bisogna sapere PostgreSQL!}\\
+L'esame consiste in un progetto più di un orale (potrebbe diventare una prova scritta all'ultima lezione del corso).\\
+Il sito del corso è \url{homes.di.unimi.mdamiani/corsi/gig/}\\
+\textbf{User}: gis7 \textbf{Pwd:} sql07sql
+
+\subsubsection{Materiale}
+\E presente un libro in formato PDF sul sito della docente.
+
+
+\subsection{Concetti Base}
+\subsubsection{Esempio di OpenStreetMaps}
+OpenStreetMaps è una \textbf{mappa} aperta \textbf{collaborativa}, sostanzialmente un disegno. Ma non ci interessano i colori delle strade ecc. Cosa vuol dire Mappa Collaborativa?
+\begin{itemize}
+ \item \textbf{Mappa} è una banca dati che contiene informazioni geografiche coerenti, che poi vengono rappresentate tramite una mappa.
+ \item \textbf{Collaborativa} la base di dati è modificabile da chiunque.\\
+\end{itemize}
+
+
+Costruire mappe è sempre stato altamente dispendioso, sopratutto per quanto riguarda l'acquisizione dei dati. OpenStreetMaps rende facile il reperimento e l'uso di dati spaziali.
+
+\subsubsection{Spazio}
+Parliamo di spazio geometrico con longitudine e latitudine, che vogliono una posizione e un sistema di riferimento. \E però molto più facile usare lo spazio cartesiano. Lo spazio simbolico invece rappresenta dei luoghi anche in base alla loro funzione (esempio cartine indoor). A seconda del tipo di spazio che sto analizzando, cambia anche la nozione di distanza. Ad esempio, come misuro la distanza in ambiente indoor?\\
+Un oggetto può avere vari tipi di proprietà:
+\begin{itemize}
+\item Geometriche (forma)
+\item Topografiche (i collegamenti, a mo di grafo)
+\item Tematiche: caratteristiche, ad esempio i il numero di abitanti di un edificio
+\end{itemize}
+
+Ci possono essere movimenti di tipo:
+\begin{itemize}
+\item Continuo: ad esempio, movimento di palla nello spazio.
+\item Discreto: ho un numero di posizioni finito, ad esempio posso essere in un dato momento solo sotto una cella telefonica.
+\end{itemize}
+
+%Possibile spostare a mappe
+\E importantissimo poter visualizzare i dati. Altrimenti, non riesco a farmi un'idea di cosa ho in mano.
+
+\subsubsection{Acquisizione dei dati}
+Ci sono vari strumenti e metodi (arei, GPS, ecc.).\\
+La posizione non è mai precisa al 100\%. I dati geospaziali dovrebbero essere sempre accompagnati anche dalla misura della loro incertezza.
+\subsubsection{Analisi dei dati}
+Posso analizzare i dati tramiti queri.
+\subsubsection{Trattamento dei dati}
+Tecnlogie:
+\begin{itemize}
+\item \textbf{Sistemi GIS} vedi slide: piattaforme software (= programmone) che mi permette di:
+	\begin{itemize}
+		\item Acquisire dati: digitalizzarli, controllarne la correttezza, integrare dati eterogenei (con fonti e caratteristiche diverse).
+		\item Archiviare e accedere ai dati
+		\item Trattare????? i dati
+		\item Visualizzare dati
+	\end{itemize}
+\item \textbf{DBMS spaziali}: DBMS normali arricchiti con tipi e operazioni per dati spaziali. Praticamente sono SQL con estensioni spaziali.
+	
+\item Package specializzati.
+\end{itemize}
+
+
+
+%\definition{Legge di Brooks}{Aggiungere personale ad un progetto in ritardo lo farà solo ritardare.}
+
+\end{document}
