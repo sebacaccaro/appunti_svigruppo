@@ -1,11 +1,13 @@
 \documentclass[a4paper,12pt]{article}
-\usepackage{float}
-\usepackage{graphicx}
+
+% Se vuoi che il pdf sia in formato mobile, decommenta la linea qui sotto e commenta la prima linea del codice
+%\input{../../.Latex_stuff/mobile.tex}
 
 \input{../../.Latex_stuff/commands.tex}
 
 
 
+\sloppy
 \begin{document}
 
 \begin{titlepage}
@@ -101,9 +103,6 @@ In Debian, ogni pacchetto contiene alcune informazioni come:
  \item Architetture supportate
  \item \textbf{Dipedenze}: tutti i pacchetti che servono al corretto funzionamento del mio pacchetto. Il solo codice sorgente del mio pacchetto è inutile senza queste informazioni
 \end{itemize}
-
-
-
 
 
 \end{document}
