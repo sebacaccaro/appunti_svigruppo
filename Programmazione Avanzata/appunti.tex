@@ -5,6 +5,7 @@
 
 
 \input{commands.tex}
+\newcommand{\pyRef}[1]{{\color{blue}{DIP pg#1}}}
 
 \begin{document}
 
@@ -59,10 +60,11 @@ Nel corso si userà \textbf{Python 3}.
 Per lanciare un'eccezione si usa la keyworw \texttt{raise}. Si usano dei blocchi \texttt{try} - \texttt{except}.
 %Metto qua lo snippet.
 %\definition{Legge di Brooks}{Aggiungere personale ad un progetto in ritardo lo farà solo ritardare.}
+\lessonDate{7 Ottobre 2019}
 
 \subsection{Tipi di dato in Python}
 I tipi di Python funzionano come in javascript, dove il tipo è associato all'oggetto.
-Ci sono vari tipi numerici. Anche i primitivi sono oggetti istanze di classi. 
+Ci sono vari tipi numerici. Anche i primitivi sono oggetti, in quanto istanze di classi. 
 
 \subsubsection{Numeri}
 Si usa, ad esempio la classe \texttt{int}. I primi numeri di Python, circa i primi 256, sono implementati tramite \textbf{singleton}.\\
@@ -71,21 +73,17 @@ Alcuni comandi:
 	\item \texttt{type()} mi torna il tipo di una variabile
 	\item \texttt{isinstance()} controlla il tipo di una variabile.
 \end{itemize}
-Posso rappresentare qualsiasi intero fino a infinito. I float sono precisi fino a 15 cifre decimali. Qui ci sono alcuni operatori:
-\begin{itemize}
-	\item +, -
-	\item Altri da completare
-\end{itemize}
+Posso rappresentare qualsiasi intero fino a infinito. I float sono precisi fino a 15 cifre decimali. Ci sono vari operatori, \pyRef{57}.
 
 \subsubsection{Liste}
 Sono trattate come degli array. Come javascript, posso avere più tipi di dato all'interno della stessa lista. Posso anche indicizzare al contrario. Esempio: \texttt{[-2]} accede al penultimo elemento della lista.\\
 L'operatore di \textbf{slicing} è il seguente \texttt{[x:y]} dove \texttt{x} è mantenuto e \texttt{y} escluso. Posso sempre usare gli indici negativi. Se ometto uno dei due indici parto dall'inizio/fine. Creo sempre un nuovo oggetto.\\
-Operatori:
+Operatori: \pyRef{64}
 \begin{itemize}
 	\item \texttt{+}: Somma fra liste, creo un nuovo oggetto.
 	\item \texttt{append}: appende un elemento alla fine della lista
 	\item \texttt{extend:} aggiunge una lista ad un'altra lista
-	\item \texttt{insert:} @@@@@@@@@@@@@@@@@@
+	\item \texttt{insert:} inserisce un elemento in una certa posizione nella lista
 	\item \texttt{in}: del tipo \texttt{if x in list}, torna true e false
 	\item \texttt{count} conta le istanze, in caso non ci sono, lancio eccezione
 	\item \texttt{del}: \texttt{del list[2]} rimuovo per posizione
@@ -99,10 +97,10 @@ Siccome non possono cambiare:
  \item Sono più efficienti
  \item Posso usarle come chiave in un dizionario
 \end{itemize}
-Posso usare più o meno le stesse operazioni sulle liste, apparte quelle che apportano modifiche. Posso usare per assegnazioni multiple a variabili (magari metto codice).
+Posso usare più o meno le stesse operazioni sulle liste, apparte quelle che apportano modifiche. Posso usare per assegnazioni multiple a variabili.
 
 \subsubsection{Sets (insiemi)}
-Struttura dati non ordinata con elementi univoci. Le creo come una lista ma con le graffe. Si crea set vuoto con \texttt{set()}. Posso anche crearli da una lista.
+Struttura dati non ordinata con elementi univoci. Le creo come una lista ma con le graffe. Si crea un set vuoto con \texttt{set()}. Posso anche crearli da una lista.
 Operatori:
 \begin{itemize}
 	\item \texttt{set.add} se possibile aggiunge un elemento al set
@@ -112,11 +110,11 @@ Operatori:
 \end{itemize}
 
 \subsubsection{Dizionari}
-Insieme di coppie chiave-valore. La sintassi è praticamente quella del JSON. Sono praticamente delle HashMap. Il dizionario vuoto si scrive con \texttt{{}}. Sono disponibili i classici del ecc.
+Insieme di coppie chiave-valore. La sintassi è praticamente quella del JSON. Sono praticamente delle HashMap. Il dizionario vuoto si scrive con \texttt{{}}. Sono disponibili i classici metodi che mi aspetterei.
 
 \subsubsection{Stringe}
 Si comportano come le liste. Uso len per la lunghezza. Posso delimitare le stringe con \texttt{"}, \texttt{'} e \texttt{```}.\\
-Stringhe di formattazione, meglio che guardo la doc. \E simile a js e php, ma tipo printf del C. Esiste anche il comando Template. Ci sono un'infinità di operazioni.
+Stringhe di formattazione (\pyRef{114}), meglio che guardo la doc. \E simile a js e php, ma tipo printf del C. Esiste anche il comando Template. Ci sono un'infinità di operazioni.
 
 
 \subsection{Ricorsione}
