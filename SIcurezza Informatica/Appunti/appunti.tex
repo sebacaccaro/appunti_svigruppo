@@ -1,0 +1,163 @@
+\documentclass[a4paper,12pt]{article}
+
+% Se vuoi che il pdf sia in formato mobile, decommenta la linea qui sotto e commenta la prima linea del codice
+%\input{../../.Latex_stuff/mobile.tex}
+
+\input{../../.Latex_stuff/commands.tex}
+
+\sloppy
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+	\Large{\textbf{Appunti di Sicurezza Informatica}}
+\vfill
+\normalsize{Caccaro Sebastiano}\\
+\normalsize{A.A.2019/2020}
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\clearpage
+
+
+%Lezione di 10 Ottobre 2019
+\lessonDate{10 Ottobre 2019}
+\section{Introduzione}
+\textbf{Sito del corso}: \url{http://security.di.unimi.it/sicurezza1920/sec2.shtmls}\\
+L'esame sarà a febbraio\\
+\textbf{Modalità esame}: parte a quiz fatta computer + parte pratica sempre fatta a computer.
+
+\section{Memory Errors}
+Specialmente in certi linguaggi di programmazione, come C e C++, che non hanno meccanismi di controllo su quello che fa il programmatore con la memoria. Posso quindi sovrascrivere zone di memoria che non sono di mia competenza. Posso quindi creare degli \textbf{unexpected behaviour}.\\
+Posso usare queste falle per comportamenti malevoli, come eseguire codice scritto da un attaccante ecc, per rubare dati ecc.\\
+Sono scritti in C o C++ componenti che devono essere velocissimi, come sistemi operativi e sistemi critici, server web, embedded sistems.\\
+Altri linguaggi non hanno questi problemi perchè inseriscono dei controlli, ma a scapito delle perfomance.
+
+\subsection{Buffer Overflow}
+\subsubsection{Storia}
+Comincia del 1988 con il \textbf{Morris Worm}. Nel giro di 3-4 ore butta giù tutta la DarpaNet, prendendo una multa di 10-100 milioni di dollari, galera ecc.
+\definition{Worm}{Programma che si autoreplica e si diffonde in varie macchine}
+Nel 2001 \textbf{Code Red} infetta 300.000 macchine in 14 ore, nel 2003 \textbf{SQL Slammer} infetta 75.000 macchine in 10 minuti.\\
+Molte vulnerabilità non vengono mai corrette, perchè comunque l'applicazione funziona lo stesso.
+\subsubsection{Layout di memoria}
+\definition{Memoria Virtuale}{Modalità di visualizzazione della memoria nella quale un processo vede tutta la memoria come se fosse assegnata solo a lui.}
+
+(Mettere immagine 1)\\
+
+Mentre lo Stack cresce verso il basso, lo Heap cresce verso l'alto. Quindi, se nello stack per allocare devo sottrarre (andare giu), nello stack devo andare verso l'alto.\\
+Lo Heap contiene perlopù variabili allocate dal progeammatore. Nello Heap, per allocare memoria, devo usare \texttt{malloc(sizeof(tipo))}. Una volta che non mi serve più quella zona, la libero con un \texttt{free}.
+
+\subsubsection{Funzionamento dello Stack}
+Inserire immagine 2\\
+Solitamente lo stack è utilizzato dal programma, in genere per le chiamate a funzioni. Lo stack è delimitato dallo \textbf{stack pointer}.
+\\Esempio 3\\
+
+\begin{figure}[H]
+\begin{center}
+\begin{lstlisting}
+function(a1,b,c)
+  int z
+  strcpy(a,a1)
+  return
+  
+main(...)
+	function(a,b,c)
+	Y:RET	
+	
+\end{lstlisting}
+\end{center}
+\caption{Esempio di chiamata a funzione}
+\end{figure}
+Quando vado ad eseguire la funzione, alloco anche un return address, che mi serve capire dove andare alla fine della funzione. I parametri della funzione vengono poi espressi in funzione della posizione dello stack pointer (SP+16 bit ecc). Alla fine della funzione, sposto l'instruction a pointer viene impostato con il valore presente in Y, ovvero il return address. \E compito del chiamante poi togliere dallo stack gli altri parametri (\texttt{a}, \texttt{b} e \texttt{c}).
+Cosa succede quindi ad una chiamata?\\
+Chiamando la funzione:
+\begin{enumerate}
+\item Push degli argomenti nello stack
+\item Push del return address
+\item Jump all'indirizzo della funzione
+\end{enumerate}
+Tornando alla funzione principale:
+\begin{enumerate}
+\item Ritorno allo stack frame precedente
+\item Torno al return address
+\end{enumerate}
+
+\subsubsection{Problematiche}
+\definition{Buffer Overflow}{Operazione di scrittura che va a eccedere la locazione di memoria allocata a un dato dato.}
+
+\begin{figure}[H]
+\begin{lstlisting}[language=C++]
+void func(char *arg1)
+{
+ int authenticated = 0;
+ char buffer[4];
+ strcopy(buffer, arg1);
+ if (authenticated) {...
+ ...
+}
+
+int main()
+{
+ char *mystr = "AuthMe!";
+ func(mystr);
+ ...
+}
+\end{lstlisting}
+\caption{Programma che esegue un buffer overflow}
+\end{figure}
+esempio 4\\
+Sto provando a copiare una stringa "\texttt{AuthMe}" nel buffer a 4 byte. Siccome un carattere corrisponde a un byte, riesco a copiare solamente "\texttt{Auth}". Quindi, per scrivere il "\texttt{Me}" devo andare sopra nello stack. Quindi ho scritto "\texttt{Me}" nella variabile \texttt{Authenticated}, che adesso è diversa da 0. Ora quindi sono autenticato!\\
+Con questo metodod potrei tranquillamente sovrascrivere tutto lo stack. Potrei, ad esempio, \textbf{sovrascrivere il return address}, saltando quindi in qualsiasi punto all'interno del programma, addirittura a parti del codice inserite in modo malevolo.
+
+\subsubsection{Code Injection}
+Lo scopo di una \textbf{Code Injection} è quello di fornire il codice da eseguire all'interno del programma. Purtroppo non posso metterla all'interno della sezione \texttt{Text}, perchè è read-only. Mettiamo quindi il codice all'interno dello stack.
+
+\begin{figure}[H]
+\begin{lstlisting}[language=C++]
+void func(char *arg1)
+{
+ char buffer[4];
+ sprintf(buffer, arg1)
+}
+\end{lstlisting}
+\caption{Snippet}
+\end{figure}
+ESEMPIO 5\\
+L'idea è quella di sovrascrivere buffer fino al return address. Il mio scopo è quello di inserire il mio codice all'interno di buffer, fino ad arrivare alla zona di memoria del return address. Nel return address andrò quindi a puntare l'indirizzo di memoria nel buffer, andando quindi ad eseguire il codice contento all'interno di essa.\\
+Ma come faccio a sapere l'indirizzo di memoria attuale del buffer? Siccome la memoria è virtuale, riesco a sapere più o meno un range dove si trova l'indirizzo del buffer. Quindi inserisco prima del codice una sequenza di \textbf{\texttt{NOP}}, una cosidetta \textbf{NOP-sled} (pista d'atterraggio) per il mio codice.
+\definition{NOP}{Short for NO Operation. Istruzione assembly che dice al processore di non fare niente per un ciclo di clock}
+
+Devo quindi avere le seguenti cose:
+\begin{itemize}
+\item Distanza da sovrascrivere
+\item Codice da inserire (inteso come codice macchina, binario, ancora più basso dell'assembly)
+\item Indirzzo del buffer
+\end{itemize}
+
+Creo quindi il cosidetto \textbf{attack vector}.
+
+\definition{Attack Vector}{Input che devo fornire al programma per inserire il mio exploit}
+
+Per capire un po'meglio dove è il return address, provo a sovrascrivere con dati a caso sempre più grandi. Se il programma crasha, vuol dire che sta probabilmente a saltare a un indirizzo a caso. Quindi è probabile che abbia trovato il return address.
+\\ESEMPIO 6 - 7\\
+Il mio scopo solitamente è quello di acquisire maggiori privilegi. Lo faccio tramite qui programmi denominati \textbf{set whith rooot}, ovvero quei programmi che possono essere eseguiti da un utente normale ma che girano con permessi di root.
+
+\subsubsection{Esempio di Code Injection}
+CODICE QUI - Su github del prof\\
+Il programma attaccante dichiare lo \textbf{shell code} (vedo slide e aggiungo def = codice che mi permette di prendere il controllo della shell). Nel main viene creato l'attack vector.
+\begin{enumerate}
+\item Creo un buffer
+\item Lo riempio di NOP
+\item Dichiaro l'offset rispetto al stack pointer, potrei doverlo cambiare
+\item Inserisco il valore dell'indirizzo all'inizio
+\item Scrivo lo shellcode dopo l'indirizzo
+\end{enumerate}
+
+Sto giro lo shell code l'ho messo sopra il return address.
+
+
+
+
+\end{document}
