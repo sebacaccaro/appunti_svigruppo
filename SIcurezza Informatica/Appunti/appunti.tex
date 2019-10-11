@@ -44,32 +44,48 @@ Molte vulnerabilità non vengono mai corrette, perchè comunque l'applicazione f
 \subsubsection{Layout di memoria}
 \definition{Memoria Virtuale}{Modalità di visualizzazione della memoria nella quale un processo vede tutta la memoria come se fosse assegnata solo a lui.}
 
-(Mettere immagine 1)\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/Stack1.pdf}
+	\caption{Layout di memoria nei processori Intel}
+\end{figure}
 
 Mentre lo Stack cresce verso il basso, lo Heap cresce verso l'alto. Quindi, se nello stack per allocare devo sottrarre (andare giu), nello stack devo andare verso l'alto.\\
-Lo Heap contiene perlopù variabili allocate dal progeammatore. Nello Heap, per allocare memoria, devo usare \texttt{malloc(sizeof(tipo))}. Una volta che non mi serve più quella zona, la libero con un \texttt{free}.
+Lo Heap contiene perlopiù variabili allocate dal progeammatore. Nello Heap, per allocare memoria, devo usare \texttt{malloc(sizeof(tipo))}. Una volta che non mi serve più quella zona, la libero con un \texttt{free}.
 
 \subsubsection{Funzionamento dello Stack}
-Inserire immagine 2\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/Stack2.pdf}
+	\caption{Stack Pointer}
+\end{figure}
+
 Solitamente lo stack è utilizzato dal programma, in genere per le chiamate a funzioni. Lo stack è delimitato dallo \textbf{stack pointer}.
 \\Esempio 3\\
 
 \begin{figure}[H]
-\begin{center}
-\begin{lstlisting}
+\centering
+\begin{lstlisting}[xleftmargin=.35\textwidth]
 function(a1,b,c)
   int z
   strcpy(a,a1)
   return
   
 main(...)
-	function(a,b,c)
-	Y:RET	
+  function(a,b,c)
+  Y:RET	
 	
 \end{lstlisting}
-\end{center}
 \caption{Esempio di chiamata a funzione}
 \end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth]{Immagini/Stack3.pdf}
+	\caption{Stack Pointer dell'esempio precedente}
+\end{figure}
+
 Quando vado ad eseguire la funzione, alloco anche un return address, che mi serve capire dove andare alla fine della funzione. I parametri della funzione vengono poi espressi in funzione della posizione dello stack pointer (SP+16 bit ecc). Alla fine della funzione, sposto l'instruction a pointer viene impostato con il valore presente in Y, ovvero il return address. \E compito del chiamante poi togliere dallo stack gli altri parametri (\texttt{a}, \texttt{b} e \texttt{c}).
 Cosa succede quindi ad una chiamata?\\
 Chiamando la funzione:

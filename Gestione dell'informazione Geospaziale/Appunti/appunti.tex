@@ -67,15 +67,15 @@ Costruire mappe è sempre stato altamente dispendioso, sopratutto per quanto rig
 Parliamo di spazio geometrico con longitudine e latitudine, che vogliono una posizione e un sistema di riferimento. \E però molto più facile usare lo spazio cartesiano. Lo spazio simbolico invece rappresenta dei luoghi anche in base alla loro funzione (esempio cartine indoor). A seconda del tipo di spazio che sto analizzando, cambia anche la nozione di distanza. Ad esempio, come misuro la distanza in ambiente indoor?\\
 Un oggetto può avere vari tipi di proprietà:
 \begin{itemize}
-\item Geometriche (forma)
-\item Topografiche (i collegamenti, a mo di grafo)
-\item Tematiche: caratteristiche, ad esempio i il numero di abitanti di un edificio
+\item \textbf{Geometriche}: forma
+\item \textbf{Topografiche}: i collegamenti, a mo di grafo
+\item \textbf{Tematiche}: caratteristiche, ad esempio i il numero di abitanti di un edificio
 \end{itemize}
 
 Ci possono essere movimenti di tipo:
 \begin{itemize}
-\item Continuo: ad esempio, movimento di palla nello spazio.
-\item Discreto: ho un numero di posizioni finito, ad esempio posso essere in un dato momento solo sotto una cella telefonica.
+\item \textbf{Continuo:} ad esempio, movimento di palla nello spazio.
+\item \textbf{Discreto:} ho un numero di posizioni finito, ad esempio posso essere in un dato momento solo sotto una cella telefonica.
 \end{itemize}
 
 %Possibile spostare a mappe
@@ -84,22 +84,92 @@ Ci possono essere movimenti di tipo:
 \subsubsection{Acquisizione dei dati}
 Ci sono vari strumenti e metodi (arei, GPS, ecc.).\\
 La posizione non è mai precisa al 100\%. I dati geospaziali dovrebbero essere sempre accompagnati anche dalla misura della loro incertezza.
-\subsubsection{Analisi dei dati}
-Posso analizzare i dati tramiti queri.
+
 \subsubsection{Trattamento dei dati}
-Tecnlogie:
+Sono presenti varie tecnologie che permettono di gestire e trattare i dati raccolti:
 \begin{itemize}
-\item \textbf{Sistemi GIS} vedi slide: piattaforme software (= programmone) che mi permette di:
+\item \textbf{Sistemi GIS}: piattaforme software (= programmoni) che mi permettono di:
 	\begin{itemize}
 		\item Acquisire dati: digitalizzarli, controllarne la correttezza, integrare dati eterogenei (con fonti e caratteristiche diverse).
 		\item Archiviare e accedere ai dati
-		\item Trattare????? i dati
+		\item Trattare i dati
 		\item Visualizzare dati
 	\end{itemize}
 \item \textbf{DBMS spaziali}: DBMS normali arricchiti con tipi e operazioni per dati spaziali. Praticamente sono SQL con estensioni spaziali.
 	
 \item Package specializzati.
 \end{itemize}
+
+\lessonDate{11 Ottobre 2019}
+\section{Coordinate Geospaziali}
+\definition{Geodesia}{Disciplina che studia la forma della Terra, le sue dimensioni, i metodi per determinare la posizione dei punti sulla sua superficie.}
+
+\definition{Cartografia}{Disciplina che ha per oggetto la rappresentazione grafica, in proporzioni ridotte, della superficie terrestre o di una parte di essa, dei suoi aspetti caratteristici, fenomeni che si svolgono e la preparazione e la costruzione delle carte geografiche.}
+
+Le coordinate sono delle tuple di numerici che hanno senso in un sistema di riferimento (CRS - Coordinate Reference System). Bisogna distinguere due tipi di coordinate:
+\begin{itemize}
+\item \textbf{Coordinate Geografiche:} ex Latitudine e longitudine.
+\item \textbf{Coordinate Proiettate:} ovvero proiettate su un piano.
+\end{itemize}
+\E possibile anche fornire delle coordinate indirette, come un indirizzo postale, IP, ecc. Questi metodi vengono poi mappati a coordinate.
+
+\subsection{Coordinate Geografiche}
+\definition{Meridiano}{Semicirconferenza che unisce i due poli.}
+\definition{Meridiano di Greenwich}{Anche detto Meridiano Fondamentale". Meridiano di riferimento per il calcolo della circonferenza.}
+\definition{Piano Equatoriale}{Piano che ha come proiezione l'equatore.}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.4\linewidth]{Immagini/LatLong.png}
+\end{figure}
+
+\subsection{Latitudine e longitudine}
+\df{Longitudine}{Angolo sul piano di meridiano fra l'equatore e la linea passante per P e perpendicolare alla superficie terrestre. Indicata con phi.}\\
+\df{Latitudine}{Angolo sul piano equatoriale formato dal piano del meridiano passante per P e il piano del meridiano fondamentale. Indicata con lambda}\\
+
+Sia latitudine e longitudine sono angoli, quindi si misurano in gradi. Ma ci sono 2 modi per esprimerli:
+\begin{itemize}
+\item \textbf{Sistemi sessasegimali:} Misuro in sessantesimi.
+\item \textbf{Sistemi digitali:} Misure in frazioni decimali di grado.
+\end{itemize}
+
+La longitudine è espressa fra \textbf{180 OVEST} e \textbf{180 EST} (-180 e 180). La latitudine è espresso fra \textbf{90 NORD} E \textbf{90 SUD} (0 -90 e 90). Per ovvi motivi, nei poli la longitudine non è definita.\\
+
+\subsection{Distanza}
+Chiaramente, per calcolare la distanza, non basta tirare una linea. La distanza più breve fra due punti, non è una linea retta sul piano.
+
+\definition{Cerchio Massimo}{Circonferenza che risulta dall'intersezione di un piano passante per il centro e la superficie terrestre. Il cerchio massimo è un esempio di geodetica}
+\definition{Distanza di Cerchio Massimo}{Distanza più breve tra 2 punti A e B è data dall'arco di cerchio massimo passante per A e B (con estremi A e B). Ipotesi di Terra sferica (errore stimato 0.3\%)}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.75\linewidth]{Immagini/CMax.png}
+	\caption{Distanza più breve (di cerchio massimo) fra due punti sulla terra}
+\end{figure}
+
+\subsection{Forma della Terra}
+La terrà non è una sfera, ci sono valli, montagne, ecc. Dobbiamo quindi stabilire una superficie di riferimento, un modello geometrico, \textbf{datum geodetico}. Una prima approssimazione potrebbe essere il geoide, che "taglia" le montagne e pone il livello di riferimento alla superficie del mare.
+Sarebbe però troppo difficile da computare, quindi usiamo un modello regolare detto \textbf{Ellissoide}. Sono stati definiti vari tipi di ellissoide. Ciò è causato da vari fattori. Alcuni ellissoidi approssimano meglio alcune aree geografiche (es Europa, Italia ecc) (datum locale), mentre altri cercano di approssimare tutta la superficie terrestre senza fare troppe preferenze. La tendenza è quella di migrare verso dei modelli globali (datum globale), come WGS84, usato nel GPS.\\
+Va da sè che latitudine e longitudine non sono sufficienti per identificare univocamente un punto, ma è necessario anche  il codice dell'ellissoide.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.75\linewidth]{Immagini/Elix.png}
+	\caption{Ellissoidi locali e globali}
+\end{figure}
+
+\subsubsection{Trasformazione di datum}
+Può dover essere necessario eseguire delle trasformazioni di datum fra modelli geodetici differenti.
+
+\subsection{Coordinate Proiettate}
+Consistono sostanzialmente in un mapping da coordinate geografiche a coordinate cartesiane. \E possibile passare da una proiezione all'altra senza perdita di dettagli tramite alcune formulette matematiche.\\
+Ovviamente, questa mappatura causa delle deformazioni, e in base a queste posso classificare le proiezioni:
+\begin{itemize}
+\item \textbf{Equivalenti:} mantengono le aree
+\item \textbf{Conformi:} mantengono gli angoli
+\item \textbf{Equidistanti: } mantengono le distanze
+\end{itemize}
+Non esistono proiezioni migliori, ma solo più ideali rispetto al contesto.
 
 
 

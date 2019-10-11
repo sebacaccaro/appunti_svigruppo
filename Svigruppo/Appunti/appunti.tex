@@ -26,7 +26,7 @@
 
 %Lezione di Giovedi 4 Ottobre 2019
 \lessonDate{4 Ottobre 2019}
-\section{Problemi dello sviluppo software}
+\section{Modelli Organizzativi}
 Lo sviluppo software presenta dei problemi intrinseci:
 \begin{itemize}
 \item \textbf{Non linearità del software}: Un errore molto piccolo può avere conseguenze catastrofiche
@@ -38,11 +38,10 @@ Questi problemi esistono tutt'oggi e sono difficilmente mitigabili. Esistono inv
 
 Nello sviluppo software, non tutto è facilmente parallelizzabile. Non posso far nascere un bambino da 9 donne in un mese. Va da se che l'\textbf{effort} non corrisponde al \textbf{progress}. \`E molto facile stimare quanto si è lavorato, è meno facile misurare di quanto si è progredito, e questo può causare ulteriori ritardi. La soluzione non è aggiungere personale.
 
-\subsection{Modelli organizzativi}
 Un progetto deve mantenere sempre la sua \textbf{integrità concettuale}.\\
 Per far ciò Brooks propone vari modelli.
 
-\subsubsection{Modelli a Cattedrale e sala Operatoria}
+\subsection{Modelli a Cattedrale e sala Operatoria}
 \begin{itemize}
 \item \textbf{Cattedrale}: Tenere rigorosamente separata progettazione e implementazione. L'implementatore deve quindi curarsi solamente di seguire quanto progettato. Si mantiene così la visione originale del progetto. Questo modello ha però il difetto di essere molto poco flessibile, e difetti nel progetto comportano problematiche enormi.
 \item \textbf{Sala operatoria:} Solamente il chirurgo (superbravo) si occupa di fare le cose importanti, gli altri nella sala fanno praticamente solo da assistente. Il vero lavoro viene svolto solamente dal chirurgo (una sola persona).
@@ -58,7 +57,7 @@ La maggior parte delle volte, tuttavia, queste supposizioni non si rivelano corr
 Eric Raymond contrappone il modello a \textbf{bazaar} (usato per lo sviluppo di Linux) contro la cattedrale di Brooks, osservando che il modello open source di Linux produca software di qualità, pur non usando i modelli proposti da brooks.
 \lessonDate{8 Ottobre 2019}
 
-\subsubsection{Modello a Bazaar}
+\subsection{Modello a Bazaar}
 Usato in Linux, si identifica esplicitamente come l'antitesi del modello a cattedrale. Raymond condivide l'analisi di Brooks, ma arriva alla conclusione che ci possano essere altri modelli in certe situazioni.
 \definition{Baazar}{Mercato autogestito, dove chiunque può mettere una bancarella dove vuole, quando vuole}
 
@@ -81,7 +80,7 @@ Ma cosa permette a progetti come questi, che non adottano i modelli di Brooks, d
 Per Brooks un numero elevato di utenti porta inevitabilmente ad avere più bug, in quanto ogni utente può vedere problemi diversi. Raymond invece considera gli utenti come collaboratori, che possono aiutare lo sviluppatore.\\
 Anche questo modello, in teoria fantastico, in pratica è abbastanza idealistico.
 
-\subsubsection{Modello a Kibbutz}
+\subsection{Modello a Kibbutz}
 Per poter supportare delle applicazioni, un sistema deve fornire dei servizi adeguati, come kernel, driver, librerie di sistema ecc.\\
 Linux è solamente un kernel, non ci si possono far girare applicazioni. Nasce quindi li concetto di \textbf{distribuzione}, ovvero un sistema completo immediatamente utilizzabile. Un programma viene quindi distribuito sotto forma di pacchetto, che è progettato per lavorare con una distribuzione (esempio pacchetto .deb).
 
@@ -93,7 +92,8 @@ Linux è solamente un kernel, non ci si possono far girare applicazioni. Nasce q
 	 \caption{Un kibbutz}
 \end{figure}
 
-Non parliamo quindi più di un bazaar, dove ognuno fa quello che vuole. Ma di un'organizzazione strutturata e organizzata, con uno scopo comune. Sono presenti delle \textbf{policy} prestabilite, che hanno dei corrispettivi tool che assicurano il rispetto di tali policy. Queste policy hanno l'effetto di abbassare drasticamente l'effort comunicativo fra i vari contributori al progetto. Questa è la filosofia adottata da Debian.
+Non parliamo quindi più di un bazaar, dove ognuno fa quello che vuole. Ma di un'organizzazione strutturata e organizzata, con uno scopo comune. Sono presenti delle \textbf{policy} prestabilite, che hanno dei corrispettivi tool che assicurano il rispetto di tali policy. Queste policy hanno l'effetto di abbassare drasticamente l'effort comunicativo fra i vari contributori al progetto. Praticamente molti progetti open-source sono organizzati a kibbutz, perchè il modello a Baazar non è una strada viabile. 
+\\Questa è la filosofia adottata da Debian.
 
 \subsubsection{Esempio di Debian}
 Fin dall'inizio, Debian è openSource (ad oggi circa 1900 sviluppatori, che devono superare degli esami). Supporta più di 10 architetture e tre kernel diversi (una distribuzione non è per forza linux).\\
@@ -104,5 +104,23 @@ In Debian, ogni pacchetto contiene alcune informazioni come:
  \item \textbf{Dipedenze}: tutti i pacchetti che servono al corretto funzionamento del mio pacchetto. Il solo codice sorgente del mio pacchetto è inutile senza queste informazioni
 \end{itemize}
 
+Nel pacchetto sono contenuti anche i propri file di configurazione. Questi file sono specificati nei pacchetti, quindi un upgrade non va a intaccare la configurazione. In caso ci siano problemi, chiedo all'utente di fare il merge.
+
+\lessonDate{10 Ottobre}
+\section{Metodologie Agili}
+%INSERISCO PARENTESI SU PRODUZIONE IN SERIE SCHIFO
+Negli anni 90 si pensa che il modo per aumentare la qualità di processi debba dipendere da una gran enfasi sulla produzione di documentazione, UML ecc. Nascono quindi dei nuovi modelli organizzativi che reagiscono a queste cose pallose, come:
+\begin{itemize}
+\item eXtreme Programming
+\item Scrum
+\end{itemize}
+Il manifesto della \textbf{Programmazione Agile} viene pubblicato nel 2001, ed esprime i seguenti concetti:
+\begin{enumerate}
+\item Individui e interazioni \textgreater\space Processi e strumenti
+\item Software funzionante \textgreater\space Documentazione esaustiva
+\item Collaborazione cliente \textgreater\space Negoziazione contratti
+\item Rispondere al cambiamento \textgreater\space Seguire un piano
+\end{enumerate}
+Tutti questi punti sono un però \textbf{molto generici e idealistici}, e sono sì belli, ma poco applicabili. Il più concreto di questi è forse il punto 4, perchè riconosce il fatto che è molto facile sbagliare la pianificazione. \E meglio quindi salvare risorse per potersi adattare a nuove situazioni.
 
 \end{document}
