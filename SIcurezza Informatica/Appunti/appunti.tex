@@ -50,8 +50,8 @@ Molte vulnerabilità non vengono mai corrette, perchè comunque l'applicazione f
 	\caption{Layout di memoria nei processori Intel}
 \end{figure}
 
-Mentre lo Stack cresce verso il basso, lo Heap cresce verso l'alto. Quindi, se nello stack per allocare devo sottrarre (andare giu), nello stack devo andare verso l'alto.\\
-Lo Heap contiene perlopiù variabili allocate dal progeammatore. Nello Heap, per allocare memoria, devo usare \texttt{malloc(sizeof(tipo))}. Una volta che non mi serve più quella zona, la libero con un \texttt{free}.
+Mentre lo Stack cresce verso il basso, lo Heap cresce verso l'alto. Quindi, se nello stack per allocare devo sottrarre (andare giu), nello heap devo andare verso l'alto.\\
+Lo Heap contiene perlopiù variabili allocate dal programmatore. Nello Heap, per allocare memoria, devo usare \texttt{malloc(sizeof(tipo))}. Una volta che non mi serve più quella zona, la libero con un \texttt{free}.
 
 \subsubsection{Funzionamento dello Stack}
 
@@ -62,7 +62,6 @@ Lo Heap contiene perlopiù variabili allocate dal progeammatore. Nello Heap, per
 \end{figure}
 
 Solitamente lo stack è utilizzato dal programma, in genere per le chiamate a funzioni. Lo stack è delimitato dallo \textbf{stack pointer}.
-\\Esempio 3\\
 
 \begin{figure}[H]
 \centering
@@ -86,7 +85,7 @@ main(...)
 	\caption{Stack Pointer dell'esempio precedente}
 \end{figure}
 
-Quando vado ad eseguire la funzione, alloco anche un return address, che mi serve capire dove andare alla fine della funzione. I parametri della funzione vengono poi espressi in funzione della posizione dello stack pointer (SP+16 bit ecc). Alla fine della funzione, sposto l'instruction a pointer viene impostato con il valore presente in Y, ovvero il return address. \E compito del chiamante poi togliere dallo stack gli altri parametri (\texttt{a}, \texttt{b} e \texttt{c}).
+Quando vado ad eseguire la funzione, alloco anche un return address, che mi serve per capire dove andare alla fine della funzione. I parametri della funzione vengono poi espressi in funzione della posizione dello stack pointer (SP+16 bit ecc). Alla fine della funzione, sposto l'instruction a pointer viene impostato con il valore presente in Y, ovvero il return address. \E compito del chiamante poi togliere dallo stack gli altri parametri (\texttt{a}, \texttt{b} e \texttt{c}).
 Cosa succede quindi ad una chiamata?\\
 Chiamando la funzione:
 \begin{enumerate}
@@ -104,12 +103,12 @@ Tornando alla funzione principale:
 \definition{Buffer Overflow}{Operazione di scrittura che va a eccedere la locazione di memoria allocata a un dato dato.}
 
 \begin{figure}[H]
-\begin{lstlisting}[language=C++]
+\begin{lstlisting}[language=C++, xleftmargin=.3\textwidth]
 void func(char *arg1)
 {
  int authenticated = 0;
  char buffer[4];
- strcopy(buffer, arg1);
+ strcpy(buffer, arg1);
  if (authenticated) {...
  ...
 }
@@ -123,7 +122,12 @@ int main()
 \end{lstlisting}
 \caption{Programma che esegue un buffer overflow}
 \end{figure}
-esempio 4\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{Immagini/Stack4.pdf}
+	\caption{Stack dell'esempio precedente}
+\end{figure}
 Sto provando a copiare una stringa "\texttt{AuthMe}" nel buffer a 4 byte. Siccome un carattere corrisponde a un byte, riesco a copiare solamente "\texttt{Auth}". Quindi, per scrivere il "\texttt{Me}" devo andare sopra nello stack. Quindi ho scritto "\texttt{Me}" nella variabile \texttt{Authenticated}, che adesso è diversa da 0. Ora quindi sono autenticato!\\
 Con questo metodod potrei tranquillamente sovrascrivere tutto lo stack. Potrei, ad esempio, \textbf{sovrascrivere il return address}, saltando quindi in qualsiasi punto all'interno del programma, addirittura a parti del codice inserite in modo malevolo.
 
@@ -131,7 +135,7 @@ Con questo metodod potrei tranquillamente sovrascrivere tutto lo stack. Potrei, 
 Lo scopo di una \textbf{Code Injection} è quello di fornire il codice da eseguire all'interno del programma. Purtroppo non posso metterla all'interno della sezione \texttt{Text}, perchè è read-only. Mettiamo quindi il codice all'interno dello stack.
 
 \begin{figure}[H]
-\begin{lstlisting}[language=C++]
+\begin{lstlisting}[language=C++, , xleftmargin=.3\textwidth]
 void func(char *arg1)
 {
  char buffer[4];
@@ -140,7 +144,6 @@ void func(char *arg1)
 \end{lstlisting}
 \caption{Snippet}
 \end{figure}
-ESEMPIO 5\\
 L'idea è quella di sovrascrivere buffer fino al return address. Il mio scopo è quello di inserire il mio codice all'interno di buffer, fino ad arrivare alla zona di memoria del return address. Nel return address andrò quindi a puntare l'indirizzo di memoria nel buffer, andando quindi ad eseguire il codice contento all'interno di essa.\\
 Ma come faccio a sapere l'indirizzo di memoria attuale del buffer? Siccome la memoria è virtuale, riesco a sapere più o meno un range dove si trova l'indirizzo del buffer. Quindi inserisco prima del codice una sequenza di \textbf{\texttt{NOP}}, una cosidetta \textbf{NOP-sled} (pista d'atterraggio) per il mio codice.
 \definition{NOP}{Short for NO Operation. Istruzione assembly che dice al processore di non fare niente per un ciclo di clock}
@@ -156,13 +159,25 @@ Creo quindi il cosidetto \textbf{attack vector}.
 
 \definition{Attack Vector}{Input che devo fornire al programma per inserire il mio exploit}
 
-Per capire un po'meglio dove è il return address, provo a sovrascrivere con dati a caso sempre più grandi. Se il programma crasha, vuol dire che sta probabilmente a saltare a un indirizzo a caso. Quindi è probabile che abbia trovato il return address.
-\\ESEMPIO 6 - 7\\
+Per capire un po'meglio dove è il return address, provo a sovrascrivere con dati a caso sempre più grandi. Se il programma crasha, vuol dire che sta probabilmente cercando di saltare a un indirizzo a caso. Quindi è probabile che abbia trovato il return address.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{Immagini/AttackV1.pdf}
+	\caption{Costruzione di un attack vector}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth]{Immagini/Stack5.pdf}
+	\caption{Processo di scrittura della memoria}
+\end{figure}
 Il mio scopo solitamente è quello di acquisire maggiori privilegi. Lo faccio tramite qui programmi denominati \textbf{set whith rooot}, ovvero quei programmi che possono essere eseguiti da un utente normale ma che girano con permessi di root.
 
 \subsubsection{Esempio di Code Injection}
-CODICE QUI - Su github del prof\\
-Il programma attaccante dichiare lo \textbf{shell code} (vedo slide e aggiungo def = codice che mi permette di prendere il controllo della shell). Nel main viene creato l'attack vector.
+Esercizio 1 disponibile qui \url{⎄https://github.com/andrealan/Software-Security-Lab/tree/master/bof-exercise}
+\definition{Shell Code}{Codice che esegue una nuova finestra della shellS}
+Il programma attaccante dichiara lo \textbf{shell code}. Nel main viene creato l'attack vector.
 \begin{enumerate}
 \item Creo un buffer
 \item Lo riempio di NOP
