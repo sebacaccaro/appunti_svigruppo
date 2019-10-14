@@ -119,6 +119,27 @@ Stringhe di formattazione (\pyRef{114}), meglio che guardo la doc. \E simile a j
 \subsection{Ricorsione}
 La ricorsione in Python non è ricorsiva in coda. Quindi insomma lol, potrebbe dare qualche problema. L'iterazione è più efficiente. In Python ho massimo 1000 ricorsioni. Posso aggirare il problema, ma la ricorsione in Python \textbf{fa cagare}.
 
+\lessonDate{14 Ottobre 2019}
+\subsection{Comprehension}
+Tramite una \textbf{comprehension} diamo una descrizione comprensiva di una lista di dati. \E come dare una formula matematica che descrive un insieme e una proprietà. \E una sorta di map, se vogliamo:
+\begin{lstlisting}
+>>> {elem:elem**2 for elem in range(1,10)}
+{1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+\end{lstlisting}
+Posso usarlo per creare liste, dizionari, tuple ecc. \E da preferire rispetto ad usare un map, perchè è molto efficiente.\\
+Posso utilizzare la comprehension anche per fare cose tipo un filter:
+\begin{lstlisting}[caption=Espressione che crea tutti i quadrati perfetti da uno a cento]
+>>> [elem for elem in range(1,100) if (int(elem**.5))**2 == elem]
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+\end{lstlisting}
+Posso usarlo anche per mergiare set diversi, e fare varie figate. Ad esempio posso fare un prodotto cartesiano (doppio for) in modo figo.
+\begin{lstlisting}
+>>> {(x,y) for x in range(3) for y in range(5)}
+{(0,1),(1,2),(0,0),(2,2),(1,1),(1,4),(0,2),(2,0),(1,3),
+(2,3),(2,1),(0,4),(2,4),(0,3),(1,0)}
+\end{lstlisting}
+Lo svantaggio/problematica di questo metodo è che non mi da modi (facili) per interrompere l'esecuzione di questo finto for.
+
 
 
 \end{document}
