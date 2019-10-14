@@ -186,7 +186,14 @@ Il programma attaccante dichiara lo \textbf{shell code}. Nel main viene creato l
 \item Scrivo lo shellcode dopo l'indirizzo
 \end{enumerate}
 
-Sto giro lo shell code l'ho messo sopra il return address.
+\noindent\textbf{\Large IMPORTANTE}\\
+ \textbf{La lettura nello stack avviene verso l'alto}. Quindi la NOP sled più che come una discesa, può essere pensata come un uno skilift.
+ 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth]{Immagini/Stack6.pdf}
+	\caption{La lettura dello stack avviene verso l'alto}
+\end{figure}
 
 
 
