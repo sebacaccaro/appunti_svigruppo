@@ -108,7 +108,7 @@ Nel pacchetto sono contenuti anche i propri file di configurazione. Questi file 
 
 \lessonDate{10 Ottobre}
 \section{Metodologie Agili}
-Negli anni 90 si pensa che il modo per aumentare la qualità di processi debba dipendere da una gran enfasi sulla produzione di documentazione, UML ecc. Nascono quindi dei nuovi modelli organizzativi che reagiscono a queste cose pallose, come:
+Negli anni 90 si pensa che il modo per aumentare la qualità di processi debba dipendere da una gran enfasi sulla produzione di documentazione, UML ecc. Secondo gli agilisti, tutto il focus che viene posto sui processi non risulta effettivamente in software di qualità.\\ Nascono quindi dei nuovi modelli organizzativi che reagiscono a queste cose pallose, come:
 \begin{itemize}
 \item eXtreme Programming
 \item Scrum
@@ -121,5 +121,54 @@ Il manifesto della \textbf{Programmazione Agile} viene pubblicato nel 2001, ed e
 \item Rispondere al cambiamento \textgreater\space Seguire un piano
 \end{enumerate}
 Tutti questi punti sono un però \textbf{molto generici e idealistici}, e sono sì belli, ma poco applicabili. Il più concreto di questi è forse il punto 4, perchè riconosce il fatto che è molto facile sbagliare la pianificazione. \E meglio quindi salvare risorse per potersi adattare a nuove situazioni.
+\lessonDate{15 Ottobre 2019}
+\vspace{0.5cm}
+\noindent Al contrario di quanto si è portati a pensare, agile non significa il rifiuto dei processi, ma piuttosto il rifiuto di continue verifiche e benchmark come misura della qualità di quanto prodotto. Quello che fanno gli agilisti è sostituire al canone fatto di processi e misurazioni un canone con dei principi astratti più o meno condivisibili.
+
+\subsection{Principi agile}
+Il manifesto agile espone 12 principi. Quelli più generali sono:
+\begin{itemize}
+\item Rilasciare software di valore, fin da subito e in maniera continua: la prima parte è un po' ovvia, La parte interessante è \textbf{fin da subito} e \textbf{in maniera continua}
+\item Consegnare \textbf{frequentemente} software funzionante
+\item Il \textbf{software funzionante} è la principale misura di progresso: attenzione che funzionante non vuol dire che soddisfa per forza le esigenze dell'utente
+\item \textbf{Cambiamenti nei requisiti} anche a stadi avanzati
+\item Committenti e sviluppatori devono lavorare insieme \textbf{quotidianamente}: è un po' più uno \textbf{scazzo} per il committente, e attribuisce meno responsabilità allo sviluppatore, evitando conflitti
+\item Conversazione faccia a faccia: ci si capisce meglio parlandosi e vedendosi
+\end{itemize}
+
+Sono presenti inoltre dei principi riguardanti il gruppo di lavoro:
+\begin{itemize}
+\item Individui motivati e ben supportati (abbastanza ovvio)
+\item Sviluppo sostenibile, ovvero essere grado di \textbf{mantenere indefinitamente un ritmo costante}: non faccio la tirata dell'ultimo secondo, perchè poi avrò delle ripercussioni
+\item Eccellenza tecnica: contrapposta alla qualità astratta nei modelli di Brooks
+\item Team che si auto-organizzano: sia per mantenere la motivazione, sia per riuscire a seguire dei ritmi sostenibili per il team
+\item A intervalli regolari il team riflette su come diventare più efficacie: è la stessa cosa di un controllo sui processi, ma implementato in modo più libero
+\end{itemize}
+L'ultimo principio invece è abbastanza poetico:
+\begin{itemize}
+\item La semplicità - l'arte di massimizzare la quantità di lavoro non svolto - è essenziale
+\end{itemize}
+
+\subsection{Principi agile nella pratica}
+Questi principi nell'implementazione in canoni agile si traducono nelle seguenti prescrizioni:
+\begin{itemize}
+\item Team \textbf{piccoli} e \textbf{auto-organizzati}, senza manager tradizionali, ma facilitatori.
+\item Rifiuto di azioni e decisioni \textbf{big upfront}, sviluppo interattivo aperto alla variazioni in corso d'opera: cerco di non prendere decisioni troppo importati a meno che non posso fare altrimenti. Mi preoccupo di possibili cambiamenti solo quando il problema si pone effettivamente. Spesso no big upfront è noto con YAGNI (you aren't gonna need it), quindi non sviluppo una cosa finchè non è completamente chiaro che ne ho bisogno. Cerco quindi di evitare l'\textbf{over engeneering}
+\item Misura e controllo del processo di sviluppo, con pianificazioni con orizzonti temporali e funzionali ridotti: ovvero mi concentro molto su quello che farò oggi, non mi preoccupo di quello che farò fra 2 settimane
+\item Enfasi su testing, intesa come tecnica di sviluppo.
+\end{itemize}
+
+\subsubsection{Enfasi sul testing}
+I requisiti sono sostituiti dalle \textbf{User Stories}, ovvero dei template di frasi che il committente compila.
+\begin{center}
+\textit{As a} \texttt{USER TYPE} \textit{I want} \texttt{FUNCTIONALITY} \textit{so that} \texttt{MOTIVATION}
+\end{center}
+Queste frasi vengono usate per capire cosa bisogna fare, e per valutare se vale davvero la pena farlo.\\
+La specifica che l'ingegneria classica produce è invece sostituita da \textbf{casi di test}, che vengono associati alle user stories. Il mio scopo è quindi quello di far passare i test, ovvero sto facendo \textbf{Test Driven Development (TDD)}.\\
+Deve quindi essere chiaro che il \textbf{test non è un elemento di verifica}.
+
+
+
+
 
 \end{document}
