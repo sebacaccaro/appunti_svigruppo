@@ -18,7 +18,6 @@
 \normalsize{A.A.2019/2020}
 \end{center}
 \end{titlepage}
-
 \tableofcontents
 
 \clearpage
@@ -166,6 +165,44 @@ I requisiti sono sostituiti dalle \textbf{User Stories}, ovvero dei template di 
 Queste frasi vengono usate per capire cosa bisogna fare, e per valutare se vale davvero la pena farlo.\\
 La specifica che l'ingegneria classica produce è invece sostituita da \textbf{casi di test}, che vengono associati alle user stories. Il mio scopo è quindi quello di far passare i test, ovvero sto facendo \textbf{Test Driven Development (TDD)}.\\
 Deve quindi essere chiaro che il \textbf{test non è un elemento di verifica}.
+
+\lessonDate{17 Ottobre 2019}
+\subsection{Scrum}
+Scrum vuol dire mischia (tipo Rugby). Tutta la metodologia Scrum è descritta in un piccolo manuale di 17 pagine, molto schematico e sintetico.\\
+Questo framework prescrive alcune regole:
+\begin{itemize}
+\item \textbf{Team piccoli}: 7+-2 persone. Il team è auto-organizzato, ma ci devono essere un \textbf{product owner} e uno \textbf{scrum master}.
+\item \textbf{Presenza di un \textbf{product owner}}: è il membro del team che funge da rappresentate del committente (fa comunque anche gli interessi della propria azienda), in modo tale da non dover scomodare il committente vero e proprio. Funge anche da interfaccia con il committente. Gestisce il backlog. Ciò è necessario perchè Scrum prescrive la necessità di ripianificare spesso.
+\item \textbf{Presenza di uno Scrum Master}: è il facilitatore del gruppo. Cerca di ovviare a problemi di sviluppo, ma anche logistici ecc. Ma esiste anche per fare rispettare i principi dello Scrum, in modo da far funzionare meglio lo Scrum stesso.
+\item \textbf{Membri del team}: oltre che a programmare, devono fare anche le stime, che sono fondamentali.
+\end{itemize}
+
+\subsubsection{Pianificazione}
+Non serve niente pianificare a lunghi periodi, perchè si rischia di sbagliare. \E meglio pianificare a brevi intervalli, in modo tale da avere una pianificazione corretta e quindi Utile.\\
+Nello sviluppo agile si creano delle \textbf{epopee} (insieme di user story) che si sviluppano in sprint con \textbf{lunghezza prefissata} di 1-3 settimane. Queste permette di avere una velocità costante e di pianificare quindi correttezza. So che comunque alla fine di questo sprint dovrò rilasciare qualcosa, anche se non del tutto conforme a quanto pianificato.\\
+Durante lo sprint non è possibile rinegoziare o aggiungere features, al limite si ricomincia lo sprint. Si chiama \textbf{closed window rule}.\\
+Per pianificare, scelgo una user story che è sicuramente chiara a tutti. A questa user story assegnerò un punteggio di 1. Esprimerò la complessità di tutte le altre user stories in relazione alla story di valore 1. Ogni membro del team fa una stima in segreto delle user story e la tiene segreta. Si scoprono le stime e poi si discute \textbf{insieme} sulla stima definitiva. Questa metodologia si chiama \textbf{planning poker}.\\
+Le riunioni sono \textbf{timeboxed}, ovvero hanno una lunghezza prefissata. Quando si discute, sono presenti dei \textbf{pigs}, ovvero delle persone direttamente interessate che hanno voce in capitolo su una decisione, e dei \textbf{chicken}, ovvero persone che possono dare solamente un'opinione.
+
+\subsubsection{Riunioni}
+Sono prescritte le seguenti riunioni:
+\begin{itemize}
+\item \textbf{Daily stand up}: (15 min ogni giorno) Cosa abbiamo fatto ieri, cosa facciamo oggi, ci sono impedimenti?
+\item \textbf{Planning}: (ogni 1-5 giorni). Pianificazione di uno sprint, definizione dello sprint backlog con stima per ogni epopea/storia
+\item \textbf{Retrospettiva}: (circa 30 min) Alla fine di uno sprint, per migliorare i processi.
+\item \textbf{Review}: (1 ora) Alla fine di uno sprint, presentazione del lavoro agli stakeholder (quindi anche al cliente).
+\end{itemize}
+
+\subsubsection{Tecniche di lavoro}
+Si usano alcune tecniche di programmazione, provenienti sopratutto dall'eXtreme programming.
+\paragraph{Pair Programming}\mbox{}\\
+\texttt{Programmazione in coppia, lit.}\\
+	\E presente un \textbf{pilota} (colui che ha la tastiera) e un \textbf{copilota} (che dice cosa cosa fare e cosa scrivere). In questo modo, si è forzati a esplicitare cosa si vuole fare, e il codice scritto deve passare per almeno 2 persone. Ovviamente ci si da il cambio con un certo intervallo di tempo. Può sembrare una perdita di tempo e soldi, ma studi dimostrano che la produttiva è solo leggermente inferiore, a fronte di una qualità del codice più alta. In questo modo, poi, ci sono più persone che conoscono una certa codebase.
+	
+\paragraph{Codice Condiviso}\mbox{}\\
+Tutto il codice deve essere accessibile e modificabile da ogni membro del team. Questo può essere estremante dannoso, ma i metodi agile pongono numerose protezioni per accorgersi di eventuali danni, come la \textbf{continuos integration} e il \textbf{TDD}.\\
+Attenzione a non confondere la condivisione del codice come ragione per rinunciare all'\textbf{Information Hiding}.
+
 
 
 
