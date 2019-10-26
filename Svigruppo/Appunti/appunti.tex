@@ -194,16 +194,79 @@ Sono prescritte le seguenti riunioni:
 \end{itemize}
 
 \subsubsection{Tecniche di lavoro}
-Si usano alcune tecniche di programmazione, provenienti sopratutto dall'eXtreme programming.
-\paragraph{Pair Programming}\mbox{}\\
+Si usano alcune tecniche di programmazione, provenienti sopratutto dall'eXtreme programming.\\
+Molte di queste tecniche sono utilizzabili e hanno senso solamente se implementate tramite tools e \textbf{framework automatici}, come Git, Junit, ecc.
+\paragraph{Pair Programming}
 \texttt{Programmazione in coppia, lit.}\\
 	\E presente un \textbf{pilota} (colui che ha la tastiera) e un \textbf{copilota} (che dice cosa cosa fare e cosa scrivere). In questo modo, si è forzati a esplicitare cosa si vuole fare, e il codice scritto deve passare per almeno 2 persone. Ovviamente ci si da il cambio con un certo intervallo di tempo. Può sembrare una perdita di tempo e soldi, ma studi dimostrano che la produttiva è solo leggermente inferiore, a fronte di una qualità del codice più alta. In questo modo, poi, ci sono più persone che conoscono una certa codebase.
 	
-\paragraph{Codice Condiviso}\mbox{}\\
-Tutto il codice deve essere accessibile e modificabile da ogni membro del team. Questo può essere estremante dannoso, ma i metodi agile pongono numerose protezioni per accorgersi di eventuali danni, come la \textbf{continuos integration} e il \textbf{TDD}.\\
+\paragraph{Codice Condiviso}
+Tutto il codice deve essere accessibile e modificabile da ogni membro del team. Questo può essere estremante dannoso, ma i metodi agile pongono numerose protezioni per accorgersi di eventuali danni, come la \textbf{continuos integration} e il \textbf{TDD}.\\ La ragione dietro ciò è dare la priorità al software funzionante per avanzare nel progetto, piuttosto al dare a ogni persona la "colpa" per ogni singolo malfunzionamento.\\
 Attenzione a non confondere la condivisione del codice come ragione per rinunciare all'\textbf{Information Hiding}.
 
+\lessonDate{22 Ottobre 2019}
 
+\paragraph{Refactoring}
+Riscrittura di un pezzo di codice senza cambiarne le funzionalità. Per essere sicuro di avere le stesse funzionalità, mi basta controllare che passi gli stessi test (vedi TDD). Molte delle operazioni di refactoring (come cambiare il nome una variabile) hanno dei metodi standard per essere implementati, anche in modo automatico (come per il cambio di nome).\\
+Il refactoring ha l'obiettivo di generalizzare il codice scritto, anche mediante l'ausilio del catalogo dei \textbf{code smell}, ovvero delle bad practise di programmazione (come la duplicazione del codice) che andrebbero rimosse.
+
+\paragraph{Test Driven Development (TDD)}
+Non è assolutamente una tecnica di verifica, ma una tecnica di progettazione.\\
+Funziona più o meno così:
+\begin{enumerate}
+\item Aggiungo un test
+\item Ripeto tutti i test di assicurandomi che il test fallisca
+\item Scrivo il codice per fare passar il test
+\item Ripeto i test, che dovrebbero passare
+\item \textbf{Refactoring}, mantenendo il funzionamento del test
+\item Da capo
+\end{enumerate}
+Eventuali bug vanno esaminati e trasformati in caso di test.\\ Si svolgono test di unità tramite appositi framework, che metto a disposizione suite con mock ecc.
+
+\paragraph{Velocity Tracking}
+La velocità è una caratteristica del mio gruppo di lavoro, che riesco a conoscere con il tempo, facendo progetti. Il gruppo deve quindi costantemente monitorare il progresso, per vedere se in linea con quanto ci si aspetta.\\
+Il meccanismo principale che mi permette di misurare il progresso è la \textbf{task board} come ad esempio il \textbf{kanban}. \E la tipica board divisa in colonne (ex. Da Fare, In Lavorazione, Fatto). Si possono prevedere anche limiti di numerosità per colonna.\\
+L'idea è di tenera traccia di cosa si è fatto e di cosa manca fare. Tendenzialmente, nelle ascisse si tende a mettere una misura temporale, e si va a comporre il \textbf{burndown chart}.
+\begin{figure}[H]
+	\centering
+	 \includegraphics[width=\linewidth]{Immagini/burnDown}
+	 \caption{Burndown Chart}
+\end{figure}
+Quello che faccio solitamente è tenere traccia dello scostamento rispetto alla pianificazione lineare.\\
+Una approsimazione per calcolare il tempo nelle ascisse è usare i giorni uomo, ad esempio per un sprint di 2 settimane con sei programmatori abbiamo \texttt{6 programmatori \textbf{x} 5 giorni a settimana \textbf{x} 2 settimane \textbf{/} 3}. Il diviso 3 serve perchè i meeting ecc portano via circa un terzo della giornata.
+
+\lessonDate{24 Ottobre 2019}
+\section{Continuos Integration}
+Nei primi anni dello sviluppo software si volevano seguire i modelli \textbf{Bottom Up} e \textbf{Top Down}. In realtà, sopratutto con l'object orientation, faccio tutto un po' alla cazzo, e non ho un chiaro modello di sviluppo.
+
+\df{Continuos Integration}{Allineamento frequente (molte volte al giorno) dagli ambienti di lavoro degli sviluppatori verso l'ambiente condiviso (mainline)}
+
+Questo modello porta alcune conseguenze:
+\begin{itemize}
+\item Non esiste una fase di integrazione definita, ma si integra via via per piccole parti. Questo però comporta che ogni volta che sviluppo una feature, essa debba essere integrabile.
+\end{itemize}
+
+\subsection{Capisaldi}
+Martin Fowler nel 2006 formula alcuni principi:
+\begin{itemize}
+\item \textbf{Mantenere una singola repo}: ci deve essere tutto, dal codice alla documentazione. Devo avere anche una chiara visione di tutte le vecchie versioni del codice.
+\item \textbf{Automatizzare la build}: già con make negli anni 70 era un problema. Ora con maven, gradle ecc siamo al top. In questo modo risparmio tempo e ho un processo più facile e affidabile.
+\item \textbf{Build auto-testante}: Non scrivo parti di codice senza un minimo di test, quantomeno per non regredire
+\item \textbf{Chiunque committa ogni giorno}: ad ogni commit di altre persone, integro i cambiamenti in modo tale da non avere problemi dopo. Siccome posso pushare solo dopo aver risolto i conflitti, l'integrazione avviene sulla mia macchina
+\item \textbf{Ogni commit dovrebbe buildare sulla macchina di integrazione}: le build sono automatizzate. Se falliscono dei test, non consento il push
+\item \textbf{Sistemo le build rotte subito}: se non riesco a sistemarla subito, faccio un revert e sistemo sulla mia macchina.
+\item \textbf{Keep the build fast}: una build veloce permette di testare ad ogni commit
+\item \textbf{Eseguire i test su un clone dell'ambiente di deployment}
+\item \textbf{Rendere facile ottenere l'ultimo eseguibile}: il vecchio approccio era fornire solo le parti non generabili, quindi solo il sorgente. Potrebbe essere che con ambienti di sviluppo diversi il codice non compili. Quindi, bisogna fornire anche gli eseguibili.
+\item \textbf{Tutti devono poter vedere cosa succede}: ovvero a che punto sono arrivato con lo sviluppo
+\item \textbf{Automatic Deployment}
+
+\subsection{Configuration Managment}
+\noindent Dagli 70 comincia ad essere utilizzato nel mondo del software.
+\df{Configuration Managment}{Pratiche che hanno l'obiettivo di rendere sistematico il processo di sviluppo, \textbf{tenendo traccia dei cambiamenti} in modo che il prodotto sia in ogni istante in uno stato (configurazione) ben definito.}
+L'approccio iniziale era quello di versionare i singoli file, e non l'insieme. Inoltre, per la collaborazione venivano usati sistemi di write lock piuttosto scomodi.
+
+\end{itemize}
 
 
 
