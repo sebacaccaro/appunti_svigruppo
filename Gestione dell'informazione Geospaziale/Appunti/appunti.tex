@@ -170,6 +170,250 @@ Ovviamente, questa mappatura causa delle deformazioni, e in base a queste posso 
 \item \textbf{Equidistanti: } mantengono le distanze
 \end{itemize}
 Non esistono proiezioni migliori, ma solo più ideali rispetto al contesto.
+Generalmente ci viene \textbf{più facile} usare coordinate proiettate.
+\lessonDate{14 Ottobre 2019}
+
+
+\subsubsection{LatLong projection}
+Latitudine e longitudine vengono usati come X e Y. Si utilizza perchè è molto semplice, senza troppi fronzoli. Si può usare quando non si hanno troppe esigenze di precisione.\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.6\linewidth]{Immagini/LatLongProj}
+	\caption{Proiezione LatLong}
+\end{figure}
+
+\subsubsection{Proiezione di Gauss}
+Sta alla base di molte proiezioni, chiamata anche \textbf{Transverse Mercator}. \E una \textbf{proiezione conforme}, quindi preserva gli angoli. Introduce grosse deformazioni, per cui usa per aree non più grandi di 6 gradi di longitudine dall'equatore (circa 600km).\\
+La proiezione di Guass è alla base di alcune proiezioni, fra cui:
+\begin{itemize}
+\item \textbf{UTM}: (Universal Trasverse Mercator). La terra è divisa in zone delimitate da 60 meridiani e da spicchi di 6 gradi di longitudine. le coordinate sono espresse in metri (x dal meridiano centrale, y dall'equatore). Per non avere coordinate negative, lo zero corrisponde a 500km.
+\item \textbf{Proiezioni di Gauss-Boaga}: usata in Italia, e pensata da un italiano per il territorio italiano. Si divide la longitudine in due fusi (verticali). Anche in questo caso sono presenti delle false origini per avere sempre coordinate positive.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{Immagini/UTM}
+	\caption{Divisione in zone UTM}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{Immagini/GaussBoaga}
+	\caption{Proiezione di Gauss Boaga}
+\end{figure}
+
+\subsection{Sistema di coordinate Geografiche (CRS)}
+Per stabilire un sistema di coordinate geografiche, ho bisogno di:
+\begin{itemize}
+\item Una proiezione cartografica
+\item Una Datum geodetico
+\end{itemize}
+
+Le varie combinazioni di CRS sono delle stringhe definite da un gruppo chiamato \textbf{EPSG}, che identificano le varie coppie, come \texttt{EPSG 4326} ecc.
+
+\subsubsection{Trasformazione dei sistemi di coordinate}
+La trasformazione fra coordinate è lossless, perchè posso ricondurre ogni coordinata alle coordinate geografiche e viceversa. \E già più complicato passare fra due dati geoedici diversi.
+
+\subsection{Scala}
+Il concetto di scala è abbastanza banale. Nella cartografia tradizionale, il concetto di scala indica implicitamente anche la precisione di un dato, perchè non posso rappresentare oggetti più piccoli di un tot. Questo concetto è trasportato anche nella cartografica digitale, dove la scala può stare a indicare la cartografia di un dataset.\\
+Più una scale è grande, più il rapporto è maggiore, e viceversa.
+
+\lessonDate{18 Ottobre}
+\section{Modelli dei dati e gestione dei dati spaziali}
+Ho bisogno di formulare delle astrazione per poter visualizzare i dati in R\^2. Posso farlo in due modi:
+\begin{itemize}
+\item \textbf{Visione concettuale:} Realizzo delle astrazioni per visualizzare delle entità
+\item \textbf{Visione basata su entità:} ho uno spazio in cui riesco a definire degli oggetti con forme geometriche e.g. curve di livello in un campo scalare o un campo vettoriale.
+\end{itemize}
+
+In R\^2 posso rappresentare:
+\begin{itemize}
+\item \textbf{Entità spaziali:} oggetti tra loro distinguibili e univocamente identificabili aventi una forma geometrica (e.g. vetta della montagna) 
+\item \textbf{Campi:} funzione \texttt{f} che associa ad ogni punto di una regione \texttt{W} in \texttt{R\^2} un valore, che può essere:
+	\begin{itemize}
+	\item \texttt{Numerico:} campo scalare e.g. temperatura \texttt{f: W -> R}
+	\item \texttt{Vettoriale}: campo vettoriale e.g. velocità \texttt{f:W -> R\^n}
+	\end{itemize}
+\end{itemize}
+
+Ad esempio, potrei rappresentare una foresta come un campo (vettoriale o numerico) o come un poligono, cioè un'entità.
+
+\subsection{Modelli per la rappresentazione dei dati spaziali}
+Esistono vari modelli per rappresentare dati spaziali.
+\subsubsection{Modello Vettoriale}
+Utilizzato per la rappresentazione di entità spaziali. Rappresentata da un elemento geometrico (punto, linea, poligono). I tipi geometrici fondamentali sono in numero limitato, ad esempio le spline non sono importanti e non sempre definiti. Non mi serve avere poligoni molto complessi, dato che i sistemi GIS hanno una maggiore tolleranza (es un cerchio posso semplificarlo con un poligono a n lati).
+
+
+\subsubsection{Modelli basato su tassellazione}
+Utilizzato per la rappresentazione di campi. Il campo devo discretizzarlo, la funzione campo f è definita su uno spazio W discretizzato. La regione W è partizionata in forma regolare o non regolare e ad ogni regione associo un valore (è praticamente una mesh). Il modello più comune è quello raster.
+
+\subsection{Raster}
+
+La regione dello spazio è divisa con una matrice (regolare) e il sistema di coordinate definisce la posizione delle celle nello spazio. Ogni cella ha associato il valore (valore del campo in quella posizione). Può essere osservato subito o tramite interpolazione e può essere null. Posso avere più layers di raster sovrapposti per codificare più informazioni.\\
+Ad esempio, ogni cella rappresenta una porzione di territorio. Posso avere layer sovrapposti: uno per la vegetazione, uno per la strada, una per l'altitudine, edifici, pressione etc.\\
+Una differenza sostanziale delle immagini raster, oltre che ad avere n layer, è che ci sono coordinate geografiche, non "locali". Corrispondono quindi a pezzi di superficie terrestre.
+
+\subsubsection{Raster VS Vettoriale}
+Un \textbf{raster} semplifica la descrizione di oggetti dai confini non definiti o incerti, è una struttura dati semplice e ha una rappresentazione approssimata.\\
+Una mappa \textbf{vettoriale} invece ha caratteristiche complementari. Descrizione precisa della forma geometrica, agevola operazioni geometriche. \E però più complesso rappresentare i campi.\\
+Non esiste un modello migliore, tutto dipende dall'uso che bisogna fare.
+
+\subsection{Modello TIN (Triangolar Irregular Network)}
+
+Diverso modello tassellato. Dato un insieme di punti campione (x, y, z), la regione è suddivisa in triangoli di dimensioni variabili e disposti irregolarmente nello spazio. Il triangolo approssima l'area compresa tra i 3 punti.
+La suddivisione è realizzata da un algoritmo di triangolazione.
+Non è proprio tridimensionale dato che z=f(x,y). Significa che io non posso avere due valori di z per lo stesso punto. Solamente 2.5D (non posso avere ad esempio un "precipizio", ad esempio come se fosse un campionamento con la *structured light*).
+Usiamo le seguenti definizioni:
+\begin{itemize}
+\item \textbf{Nodi:} punti campione
+\item \textbf{Bordi}: lati dei triangoli: un bordo ha due nodi e un nodo può essere collegato a più bordi
+\item \textbf{Triangoli o face}: un triangolo ha 3 bordi
+\item \textbf{Topologia}: descrive la struttura dei triangoli e la relazione di adiacenza tra triangoli (adiacenti se hanno un bordo in comune)
+\end{itemize}
+Non è possibile effettuare interrogazioni su campi ed entità in un'unica interrogazione. Utilizzeremo solo dati vettoriali. Le ultime versioni di QGIS possono utilizzare dati di tipo mesh.
+
+\section{Basi di dati spaziali}
+
+La gestione dei dati spaziali è complessa, dato che il dato vettoriale ha una struttura complessa. Ad esempio, un poligono può essere descritto da migliaia di punti organizzati in array o array di array (strutture più complesse). I dati sono numerosi e non è ovvio come interrogare i dati spaziali. Una base di dati geospaziali deve quindi garantire l'accesso ai dati in essa contenuti in modo efficiente.
+
+\df{Base di dati spaziale}{Insieme della base di dati, modello dei dati e del linguaggio di interrogazione, che insieme permettono di utilizzare tipi di dati spaziali. Consente l'accesso efficiente a questi dati tramite indici spaziali.}
+
+\subsection{Architetture dei dati}
+Storicamente tutti i dati spaziali venivano gestiti tramite file system, poi si è cominciato ad integrarli con un DMBS relazionale con campi BLOB e poi grazie al Object-Relational possiamo estendere i tipi di dato del DBMS.
+
+\subsubsection{Gestione dei dati tramite file system}
+Organizzati in files, prima architettura utilizzata. L'organizzazione dei dati è data dal formato \textbf{ESRI Shapefile} (o shape) che ora è (forse?) open source. I dati sono organizzati per layer (insieme omogeneo di entità).Ogni layer viene descritto da un insieme di files:
+\begin{itemize}
+  \item \textbf{.dbf}: dati alfanumerici (non spaziali)
+  \item \textbf{.shp}: dati spaziali
+  \item \textbf{.shx}: indice per accedere ai dati spaziali
+  \item \textbf{.prj}: dati relativi al CRS
+\end{itemize}
+
+Questi modelli, però, presentano alcune limitazioni:
+\begin{itemize}
+\item Proliferazione di files, gestione complessa (e.g. per errore elimino uno o più file)
+
+\item I dati spaziali e alfanumerici non sono integrati ma separati, su file diversi. Modifiche separate possono rendere i dati inconsistenti
+
+\item Non esiste un linguaggio di interrogazione standardizzato e ottimizzato: accedo ai dati tramite funzioni ad hoc e le operazioni sui dati alfanumerici e spaziali sono distinti
+\end{itemize}
+
+\subsubsection{Modello relazionale esteso}
+Usare un database tradizionale, per quanto possa sembrare una buona idea, può presentare alcuni di problemi. Si consideri la seguente situazione:\vspace{0.3cm}\\ 
+\textit{Voglio rappresentare un parco come un poligono con degli attributi. Devo utilizzare il modello relazionale per rappresentare ciò. Creo due tabelle dove in una ho il nome dei parchi e delle città rispettive e in un altra tabella la geometria del parco (vettori). Nella prima tabella ho una chiave esterna che referenzia la chiave primaria della seconda tabella.
+Se io dovessi cambiare la geometria, allora devo propagare la modifica di tutte le sequenze di tutti i punti. Poi nel caso dovessimo sapere la geometria a quale parco riferisce, dobbiamo fare un JOIN. Ciò è molto inefficiente. Nel modello relazionale il dominio dell’attributo è definito su valori atomici (prima forma normale), mentre i punti sono coppie di valori; inoltre i punti sono ordinati ed i meccanismi di indicizzazione sono definiti su attributi alfanumerici. Non sono adatti per la indicizzazione di geometrie.}\vspace{0.3cm}\\
+Nel modello esteso, i dati spaziali sono memorizzati in BLOB (Binary Large OBject) di ampie dimensioni. L'ampiezza del campo arriva a 2GB. Ho il vantaggio che ho tutto in un'unica tabella (sia i valori alfanumerici che spaziali), ma non posso fare interrogazioni su dati geometrici (come faccio a fare query su BLOB?) e non è possibile eseguire le query in modo ottimale (si utilizzano indici diversi)
+
+\subsubsection{Modello relazionale ad oggetti}
+Tipi di dati strutturati: immagini, audio/video etc. e definizione di nuovi tipi di dato; ma ho comunque la gestione dei dati basata su modello relazionale (accessi avvengono con SQL e tutte le entità di interesse sono modellate tramite tabelle). Inoltre esistono indici spaziali.
+
+\subsubsection{Modello OGC Simple Features}
+Consorzio che lavora per standardizzare la rappresentazione di dati spaziali di diversa natura. \E il \textbf{modello di riferimento}.Funziona con PostGIS ed ESRI è OGC compliant.
+
+\lessonDate{21 Ottobre}
+\subsection{Modelli Mesh}
+Per mesh si intende un reticolo. \E una partizione dello spazio costruito a partire da un insieme di punti campione in tre dimensioni. I vari punti sono collegati, e parliamo di vertici, spigoli, facce, e stanno spesso a formare dei triangoli. Spesso un punto ha uno o più attributi scalari o vettoriali.
+
+\subsection{OCG Simple Features}
+\E un insieme di aziende che promuove lo sviluppo di interfacce standard per la gestione dei dati spaziali attraverso:
+\begin{itemize}
+\item Abstract Specifications
+\item Implementation Standard: documenti tecnici con le specifiche implementative (API), come le \textbf{Simple Features}
+\end{itemize}
+Per \textbf{feature} si intende un'entità nel mondo reale. Le feature possono essere raggruppati in insiemi omogenei chiamati tipi.
+Vengono chiamata \textbf{feature spaziale} un tipo di feature che contiene almeno un \textbf{attributo geometrico}.\\
+Ogni attributo geometrico ha associato un sistema di rifermento nelle specifiche.\\
+Tutte le classi in OCG sono specificate da un diagramma UML, la base del quale è la classe astratta \texttt{Geometry}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.2\linewidth]{Immagini/UMLGIS}
+	\caption{Diagramma UML di OCS SF}
+\end{figure}
+Analizziamo ora alcuni tipi degni di nota.
+
+\subsubsection{Point}
+Tipo di dato che contiene delle coordinate e dei metodi per accedere a esse.
+
+\subsubsection{Curve}
+Oggetto geometrico che estende \texttt{LineString}, è sostanzialmente una sequenza di punti. Gli estremi di questa curva sono chiamati \textbf{frontiera}. Esistono vari tipi di curva:
+\begin{itemize}
+\item  \textbf{Curva Semplice}: Tipo di curva che non si interseca.
+\item \textbf{Curva Chiusa}: Tipo di curva in cui gli estremi coincidono, quindi la frontiera è nulla.
+\item \textbf{Anello:} curva semplice e chiusa.
+\end{itemize}
+
+\subsubsection{Polygon}
+Oggetto geometrico a due dimensioni. Definito da una frontiera esterna e una o più frontiere interne rappresentate da curve chiuse. Una frontiera interna delimita un \textbf{buco}. Le frontiere sono anelli e non si possono intersecare. Un anello può toccare un altro anello solo in un punto tangente. I poligoni devono essere \textbf{validi}, ovvero non devono presentare anomalie.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/PoliVal}
+	\caption{Esempio di Poligoni validi}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/PoliNVal}
+	\caption{Esempio di Poligoni non validi}
+\end{figure}
+
+Internamente, rappresento un poligono come una sequenza di anelli, ad esempio \texttt{([P1, P2, P3, P4, P1],[P5, P6,P7, P8,P5])}, dove la sequenza più esterna rappresenta la frontiera esterne, mentre le altre sono i buchi.\\
+Esiste un tipo \texttt{surface} che estende \texttt{polygon}, che mi permette di calcolare il centro, l'area, capire se un punto è contenuto nel poligono ecc.
+
+\subsection{Geometry Collection}
+Collezione di geometrie. Viene esteso da varie classi concrete:
+\begin{itemize}
+\item \textbf{MultiPoint}: Insieme di \texttt{Point}. Viene detto semplice quando non ci sono due punti uguali.
+\item \textbf{MultiLineString}: Insieme di LineString. Fornisce un metodo \texttt{length()} che somma tutte le lunghezze, e un metodo \texttt{isClosed()} che ritorna \texttt{true} se tutte le linee sono chiuse.
+\item \textbf{MultiPolygon}: Rappresentazione di collezione poligonale. Gli elementi non possono avere punti in comuni se non punti di contatto su confini.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/MultiVal}
+	\caption{Esempio di MultiPoligono validi}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/MultiNVal}
+	\caption{Esempio di MultiPoligono non validi}
+\end{figure}
+
+\subsection{Formati per la rappresentazione geometrica}
+Esistono due tipi di formati per la rappresentazione geometrica nelle basi di dati: \textbf{Well-know Text (WKT)} che è un formato testuale, e \textbf{Well-Known Binary (WKB)} che è un formato binario. In una base dati, i dati sono conservati in WKB, ma vengono trasformati in WKT per essere interpretati.
+
+\subsubsection{Esempi di WKT}
+Multipunto con 3 punti:\\
+\texttt{MULTIPOINT(0 0, 20 20, 60 60)}\\
+
+\noindent Multilinea con 2 linee\\
+\texttt{MULTILINESTRING((10 10, 20 20), (15 15, 30 15))}\\
+
+\noindent Multipoligono con 2 poligoni\\
+\texttt{MULTIPOLYGON(((0 0,10 0,10 10,0 10,0 0)),((5 5,7 5,7 7,5 7, 5 5)))}\\
+
+\noindent Collezione di geometrie con 2 punti e una linea:\\
+\texttt{GEOMETRYCOLLECTION(POINT(10 10), POINT(30 30), LINESTRING(15 15, 20 20))}\\
+
+\subsection{Validità per la rappresentazione Geometrica}
+Le geometrie sono \textbf{valide} quando sono costruite correttamente in conformità con lo standard:
+\begin{itemize}
+\item Geometrie di tipo punto, singole o multiple, sono sempre valide
+\item Geometrie di tipo linea, singole o multiple, sono sempre valide purchè la geometria comprenda almeno 2 punti distinti
+\item Una geometria singola di tipo poligono è valida se: 
+	\begin{itemize}
+	\item Ogni è una linea valida con almeno 3 vertici che formano un poligono.
+	\item L’anello esterno contiene ogni anello interno
+	\item Nessun anello puo’ intersecare se stesso o un altro anello. Un anello tuttavia puo’ avere un numero finito di punti in comune con un altro anello
+	\end{itemize}
+\item Una geometria multipla di tipo poligono è valida se le singole geometrie sono disgiunte o hanno un numero finito di punti di contatto
+\end{itemize}
+
+
+Posso vedere se sono valide con \texttt{ST\_isValid(Geometry)} appartenente alla classe Geometry. Alcuni sistemi hanno funzionalità aggiunte di validità ad esempio punti duplicati e linee non connesse.
 
 
 

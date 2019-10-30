@@ -140,6 +140,98 @@ Posso usarlo anche per mergiare set diversi, e fare varie figate. Ad esempio pos
 \end{lstlisting}
 Lo svantaggio/problematica di questo metodo è che non mi da modi (facili) per interrompere l'esecuzione di questo finto for.
 
+\lessonDate{21 Ottobre 2019}
+\section{Programmazione funzionale}
+\E un modo di programmare che scoraggia l'uso dello stato, e dei side effect. L'oggetto primario è la funzione, e il flusso è regolato tramite la \textbf{ricorsione}.
+\subsection{Motivi}
+Dovrebbe essere più simile al tipo di definizione matematiche a cui dovremmo essere abituati. Il vero motivo è che programmando funzionalmente dovrei commettere \textbf{meno errori}. Questo perchè avere uno stato, e in particolar modo l'assegnazione di variabili, è una delle principali fonti di errori. Oltre a ciò, in un linguaggio di programmazione funzionale è più facile individuare gli errori commessi.
+
+\subsection{Istruzioni a supporto}
+Le istruzioni cardine della programmazione funzionale sono il \texttt{map()}, il \texttt{filter()} e il \texttt{reduce()}. Il map e il filter non ritorano direttamente una lista, ma un iterabile. Se dopo voglio una lista, devo mettere questo iterabile dentro il costruttore della lista. Il reduce ha peculiarità che il primo elemento della lista di partenza viene usato come accumulatore. Volendo c'è anche un parametro opzionale per l'accumulatore.
+
+\subsection{Condizionali}
+Nella programmazione funzionale pura non è possibile usare il construtto \texttt{if}. Uso quindi lo \textbf{short-circuiting}.
+\begin{figure}[H]
+\begin{lstlisting}
+return (x==1 and 'one') or (x==2 and 'two') or 'other'
+\end{lstlisting}
+\caption{Esempio di short circuiting}
+\end{figure}
+Lo short circuiting funziona praticamente come in javascript.
+
+Vado bene a usarlo con le lambda.
+\begin{figure}[H]
+\begin{lstlisting}
+cond = \
+ lambda x: \
+  (x==1 and block("one")) or (x==2 and block("two")) or (block("other"))
+\end{lstlisting}
+\caption{Esempio di lambda}
+\end{figure}
+
+\subsection{Codice sequenziale}
+Nella programmazione funzionale, scrivere il codice in modo sequenziale (aka imperativo) non è accettabile.\\
+Posso fare una cosa del genere:
+\begin{figure}[H]
+\begin{lstlisting}
+# let's create an execution utility function
+do_it = lambda f: f()
+
+# let f1, f2, f3 (etc) be functions that perform actions
+map(do_it, [f1,f2,f3])
+# map()-based action sequence
+\end{lstlisting}
+\end{figure}
+
+\subsection{Funzioni monadiche}
+Sono funzioni che causano un side effect ma che comunque ritornano comunque qualcosa.
+\begin{lstlisting}
+# Funzione Imperativa
+def echo_IMP():
+	while True:
+		x = input("FP -- ")
+		if x == 'quit': break
+		else: print(x)
+		
+if __name__ == "__main__": echo_IMP()
+
+#Funzione Monadica Funzionale
+echo_FP = \
+lambda: monadic_print(input("FP -- "))=='quit' or echo_FP()
+if __name__ == "__main__": echo_FP()
+\end{lstlisting}
+
+\lessonDate{22 Ottobre 2019}
+\section{Clousures}
+\E solo sostanzialmente un modo come un altro per dire che posso passare le funzioni come parametro e fare alcune figate.
+
+\section{Generatori}
+Un generatore è una funzione che può tornare più volte un valore, tramite il costrutto \texttt{Yield}, e si avanza la funzione tramite la keyword \texttt{next}. Posso usare i generatori anche nei for, e in tal caso non serve che chiamo il next.
+\begin{figure}[H]
+\begin{lstlisting}[language=python]
+def make_counter(x):
+	print('entering make_counter')
+	while True:
+		yield x
+		print('incrementing x')
+		x = x + 1
+...
+print(next(make_counter))
+\end{lstlisting}
+\caption{Esempio di generatore che funge da contatore}
+\end{figure}
+
+\section{Tipizzazione Dinamica}
+Python funziona un po'come Javascript:
+Quando creo una variabile, essa non ha tipo, ma è un semplice riferimento ad un oggetto. \E l'oggetto che contiene il tipo di una variabile. Posso quindi pensare alla variabili come a dei semplici puntatori a oggetti. Come Java e Javascript, python è \textbf{garbage collected}.\\
+Per controllare l'uguaglianza fra due variabili esistono due operatori:
+\begin{itemize}
+\item \texttt{==} controlla l'uguaglianza di valore di due oggetti. Ex \texttt{A == B}
+\item \texttt{is} controlla l'uguaglianza di reference fra due oggetti. Ex \texttt{A is B}. Attenzione che siccome interi e altri piccoli oggetti vengono cachati, \texttt{is} in questi casi restituisce sempre \texttt{True}
+\end{itemize}
+
+In python il passaggio di parametri a funzione avviene sempre \textbf{per riferimento}. Fanno eccezione alcuni tipi immutabili, come interni, stringhe, e tuple, che vengono passate per valore.
+
 
 
 \end{document}

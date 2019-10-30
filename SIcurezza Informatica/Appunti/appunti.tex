@@ -195,6 +195,186 @@ Il programma attaccante dichiara lo \textbf{shell code}. Nel main viene creato l
 	\caption{La lettura dello stack avviene verso l'alto}
 \end{figure}
 
+\lessonDate{22 Ottobre}
+\subsection{Heap Overflow}
+\subsection{Concetti generali sull'allocazione nello Heap}
+L'allocazione nello Heap è gestita manualmente dallo sviluppatore e consente l'allocazione di grosse strutture dati anche dinamicamente a run time. Generalmente è più lenta rispetto allo stack.\\
+Le due operazioni permesse sullo Heap sono:
+\begin{itemize}
+\item \texttt{malloc(bytes)}: richiede l'allocazione di tot byte nello Heap.
+\item \texttt{free(puntatore)}: libera una porzione di memoria precedentemente occupata.
+\end{itemize}
+
+\subsubsection{Heap Chunck}
+Lo Heap è organizzato in \textbf{chunck}, struttura dati rappresentata in seguito.
+\begin{figure}[H]
+\begin{lstlisting}
+struct malloc_chunk {
+  /* Size of previous chunk (if free).  */
+  INTERNAL_SIZE_T      prev_size;  
+  /* Size in bytes, including overhead. */
+  INTERNAL_SIZE_T      size;       
+
+  /* double links -- used only if free. */
+  struct malloc_chunk* fd;         
+  struct malloc_chunk* bk;
+
+/*Only used for large blocks: pointer to next larger size.*/
+/*double links -- used only if free. */
+  struct malloc_chunk* fd_nextsize; 
+  struct malloc_chunk* bk_nextsize;
+}
+\end{lstlisting}
+\end{figure}
+
+\noindent\textbf{fd} e \textbf{bk} stanno per \textbf{forward} e \textbf{backwards}. Nello Heap, i blocchi liberi sono organizzati in liste doppiamente linkate con chunk di dimensioni simili. I blocchi occupati, non hanno tali puntatori.\\
+Per ogni chunk, se il chunk precedente è libero, il bit meno significativo di INTERNAL\_SIZE\_T è posto a 0, altrimenti va posto a 1.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{Immagini/Heap1}
+	\caption{Sezione di Heap prima e dopo la free di un chunk}
+\end{figure}
+\subsubsection{Allocazione Memoria}
+\noindent Il chunck che rappresenta la memoria libera nello Heap è detto \textbf{Top Chunk}. Ogni qualvolta voglio allocare nuova memoria, il top chunk viene diviso in due: una parte diventa memoria allocata, la parte rimasta libera diventa il nuovo top chunk.\\ Ovviamente si ricorre allo splitting del top chunck solamente se non ci sono chunk liberi di dimensioni idonee nelle liste di chunck liberi.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth]{Immagini/Heap2}
+	\caption{Heap dopo un malloc di 256, uno di 512 e uno di 1024 in quest'ordine}
+\end{figure}
+
+\subsection{Deallocazione memoria}
+Quando dealloco memoria svolgo le seguenti operazioni:
+\begin{itemize}
+\item Pongo a 0 il bit meno significativo del campo size del blocco successivo a quello che sto deallocando.
+\item Pongo nel campo \texttt{prev\_size} del chunk successivo la dimensione del chunk che sto allocando.
+\item In caso anche il chunk precedente sia libero, unisco i due chunk.
+\end{itemize}
+\subsubsection{Unsafe Unlink}
+Quando vado a deallocare un chunck preceduto o succeduto da un un chunk libero, posso andare a mergiare questi due chunk.\\
+Analizziamo il caso in cui il chunk precedente (p) a quello che devo deallocare sia libero. Svolgerò le seguenti operazioni:
+\begin{itemize}
+\item Incremento la size di p, inglobando il chunk successivo.
+\item Eseguo l'\textbf{unlink} di p (che quindi ora ingloba anche il chunk che voglio deallocare)
+\item Posiziono p nella lista di chunk più appropriata
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{Immagini/Unlink}
+	\caption{Situazione prima e dopo unlink}
+\end{figure}
+
+Questa procedura avviene tramite il seguente codice
+
+\begin{figure}[H]
+\begin{lstlisting}[language=C]
+#define unlink(P, BK, FD) {
+  FD = P->fd;
+  BK = P->bk;
+  FD->bk = BK;
+  BK->fd = FD;
+}
+\end{lstlisting}
+\end{figure}
+
+http://etutorials.org/Networking/network+security+assessment/Chapter+13.+Application-Level+Risks/13.5+Heap+Overflows/
+
+\lessonDate{24 Ottobre 2019}
+\subsection{User After Free}
+\E più legato a proprietà temporali della memoria che a proprietà spaziali. Rispetto ad altre vulnerabilità, è più difficile da individuare e da correggere. Ad oggi, è una delle vulnerabilità più usate e sfruttate. Ne sono state trovate in browser come Chrome, ma anche in altri browser.\\
+In linguaggi come Java queste cose non sono possibili perchè sono presenti vari controlli sulla memoria. Rispetto a questa specifica vulnerabilità, Java si protegge tramite il garbage collector.\\
+La user after free avviene quando una zona di memoria viene liberata, ma provo comunque a dereferenziare il puntatore che la puntava. Si basa quindi sui \textbf{dangling pointers}. Una volta deallocata una zona di memoria, è buona pratica settare il suo puntatore a 0.\\
+Sostanzialmente, quello che si può fare è usare un dangling pointer per accedere a zone di memoria che dovrei lasciare stare.
+\subsubsection{Esempio di Use After Free}
+\begin{lstlisting}[language=C]
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <stdio.h>
+
+struct auth {
+  char name[32];
+  int auth;
+};
+
+struct auth *auth;
+char *service;
+
+int main(int argc, char **argv)
+{
+  char line[128];
+
+  while(1) {
+      printf("[ auth = %p, service = %p ]\n", auth, service);
+
+      if(fgets(line, sizeof(line), stdin) == NULL) break;
+      
+      if(strncmp(line, "auth ", 5) == 0) {
+          auth = malloc(sizeof(auth));
+          memset(auth, 0, sizeof(auth));
+          if(strlen(line + 5) < 31) {
+              strcpy(auth->name, line + 5);
+          }
+      }
+      if(strncmp(line, "reset", 5) == 0) {
+          free(auth);
+      }
+      if(strncmp(line, "service", 6) == 0) {
+          service = strdup(line + 7);
+      }
+      if(strncmp(line, "login", 5) == 0) {
+          if(auth->auth) {
+              printf("you have logged in already!\n");
+          } else {
+              printf("please enter your password\n");
+          }
+      }
+  }
+ }
+\end{lstlisting}
+Il programma è un loop continuo che chiede all'utente che servizi vuole. Posso scegliere fra 4 comandi, a seconda di quello che voglio fare. Il comando auth vuole una sintassi del tipo \texttt{auth admin}. Reset libera la memoria puntata da auth. Service copia la linea inserita e la mette dentro dentro \texttt{service}. Login controlla se io mi sono già loggato o no. Voglio autenticarmi anche se non so la password, mettendo auth$->$auth a 1. I passaggi per loggarsi sono i seguenti:
+\begin{itemize}
+\item Chiamo il comando \texttt{auth}, scrivendo tipo \texttt{auth seba}
+\item Chiamo il reset, andando a deallocare auth
+\item Chiamo service e una stringa lunghissima, tipo \texttt{service AAAA[...]AAA}. Non posso metterla troppo lunga però, altrimenti andrei nel top chunk. Meglio andare ad allocare piccole stringhe "a tentoni" o guardando bene con gdb
+\item Ora, se chiamo login, sono dentro. Questo perchè sto provando a leggere la zona di memoria di auth, che è stata deallocata (è però rimasto un dangling pointer) ma sostituita dalla nuova stringa service, quindi \texttt{auth = 1}
+\end{itemize}
+
+\section{Gdb}
+Gdb serve per debbugare e fare gli hackerini. Si lancia con \texttt{gdb ./nome-programma.} Ecco una lista di comandi utili:
+\begin{itemize}
+\item \texttt{disasasemble} scompone il codice in formato assembler. Se vedo tutti gli zeri, devo caricare gli indirizzi. Scrivo:
+\begin{itemize}
+ \item \texttt{*b 0x0} Inserisco breakpoint
+ \item \texttt{r} per lanciare il programma, mi da errore ma ok
+ \item \texttt{delete breakpoints}
+ \item \texttt{disassemble main}
+ \end{itemize}
+ \item Per caricare lo heap devo: far partire il programma , fare un'allocazione e poi fare ctrl + c.
+\item \texttt{set pagination off} toglie la paginazione.
+\item Con il comando \texttt{info reg} ottengo l'indirizzo di tutti i registri, fra cui lo \textbf{stack pointer} e l'instruction pointer.
+\item Per vedere cosa succede nello stack, scrivo x/40x e poi l'indirizzo dello stack. Sto dicendo a gdb di stampare 40 words in esadecimale. \E più comodo scrivere \texttt{x/40x \$sp}
+\item Per analizzare lo heap, con \texttt{info proc mappings} trovo il mappaggio in memoria del programma e quindi anche nello heap. Quindi, lanciando \texttt{x/40x indirizzo-heap}, riesco a visualizzare lo heap. La sequenza di comandi è:
+\begin{itemize}
+\item \texttt{r}
+\item eseguo almeno un'operazione sullo heap
+\item \texttt{ctrl + c}
+\item Proseguo con quello che devo fare
+\item metto 
+\end{itemize}
+\end{itemize}
+Posso creare comandi ad hoc tramite \texttt{command}. Posso fare comandi come:
+\begin{itemize}
+\item \texttt{echo stringa} per stampare una stringa.ì
+\item \texttt{print nomevariabile} per stampare il contenuto di una variabile
+\item Gli stessi comandi di prima, come \texttt{x/40x ecc}. 
+\item Termino l'inserimento di comandi con \texttt{continue} e \texttt{end}.
+\end{itemize}
+Questo command verrà eseguito ad ogni breakpoint.\\
+Quando eseguo con gdb, lo stack del mio programma viene shiftato in giù di qualche unità.
 
 
 

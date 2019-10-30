@@ -260,13 +260,51 @@ Martin Fowler nel 2006 formula alcuni principi:
 \item \textbf{Rendere facile ottenere l'ultimo eseguibile}: il vecchio approccio era fornire solo le parti non generabili, quindi solo il sorgente. Potrebbe essere che con ambienti di sviluppo diversi il codice non compili. Quindi, bisogna fornire anche gli eseguibili.
 \item \textbf{Tutti devono poter vedere cosa succede}: ovvero a che punto sono arrivato con lo sviluppo
 \item \textbf{Automatic Deployment}
+\end{itemize}
 
 \subsection{Configuration Managment}
-\noindent Dagli 70 comincia ad essere utilizzato nel mondo del software.
+\noindent Dagli anni 70 comincia ad essere utilizzato nel mondo del software.
 \df{Configuration Managment}{Pratiche che hanno l'obiettivo di rendere sistematico il processo di sviluppo, \textbf{tenendo traccia dei cambiamenti} in modo che il prodotto sia in ogni istante in uno stato (configurazione) ben definito.}
-L'approccio iniziale era quello di versionare i singoli file, e non l'insieme. Inoltre, per la collaborazione venivano usati sistemi di write lock piuttosto scomodi.
+\noindent L'approccio iniziale era quello di versionare i singoli file, e non l'insieme. Inoltre, per la collaborazione venivano usati sistemi di write lock piuttosto scomodi.
+\lessonDate{29 Ottobre 2019}\vspace{0.3cm}
+\noindent \E meglio configurare l'insieme dei file e il loro stato, in modo tale da avere sempre una configurazione funzionale.\\
+Quando lavoro sui file, calcolo le differenze in base alle linee di testo.\\
+Dagli anni 2000, con l'avvento dell'open source e di internet, si sono resi necessari nuovi metodi di collaborazione \textbf{distribuiti} e \textbf{flessibili}, come git e mercurial. Questo è necessario a permettere una collaborazione da parte di molte persone e anche saltuaria.
 
+\subsubsection{Artifact}
+Ogni SCM deve affrontare alcune scelte:
+\begin{itemize}
+\item \textbf{Archiviazione degli artifact}: è molto costoso e occupa molto spazio, ma permette di avere esattamente il prodotto compilato. In alternativa, si può salvare meticolosamente la configurazione di ambiente per avere un processo di compilazione \textbf{replicabile}
 \end{itemize}
+
+\subsubsection{Sincronizzazione}
+Il meccanismo base negli SCM è quello di \textbf{check-in} (commit) e \textbf{check-out}, che vanno a versionare un set di cambiamenti su uno o più file. Non vado quindi a versionare immediatamente ogni linea di codice. In teoria, non servirebbe un nodo centrale, perchè ogni peer possiede l'intera copia della codebase, che può essere sincronizzata con gli altri. In pratica, si usa un \textbf{repository centrale} per sincronizzare più velocemente e facilmente tutte le modifiche.
+
+\subsubsection{Lavoro concorrente}
+Si può gestire in due modi:
+\begin{itemize}
+\item \textbf{Lock:} ogni file ha un lock, e può essere modificato da una persona alla volta. Non il migliore approccio.
+\item \textbf{Merge:} più persone possono modificare lo stesso file contemporaneamente, la prima persona che effettua il merge lo esegue, le altre risolvono i conflitti. \E possibile lavorare anche senza connessione, e poi posso sincronizzare in seguito.
+\end{itemize}
+\E chiaro che il \textbf{merge} è la tecnica superiore, anche se comunque a volte può essere difficoltoso. Posso avere varie situazioni:
+\begin{itemize}
+\item Lavoro parallelo su file diversi: non ho molti problemi, a meno che non faccio cazzate cambiando l'interfaccia.
+\item Lavoro parallelo su hunk diversi: nessun problema, non creo conflitti.
+\item Lavoro parallelo sullo stesso hunk: confitto :(, lo devo risolvere (ovviamente in locale) prima di pushare. Per capire chi abbia la versione modificata del file, vado a cercare un antenato comune fra la codebase A e la codebase B. Se A non presenta differenze e B si, allora vuol dire che è B che ha modificato il file.
+\end{itemize}
+
+\df{Hunk}{Insieme di righe adiacenti in file che hanno subito modifiche}
+
+\subsubsection{Implementazione}
+I vecchi sistemi di versioning salvavano ogni volta i \textbf{delta} dalla versione predente o successiva. Questo risparmia spazio, ma andare ad accedere a varie versioni è molto costoso. Git, invece, ogni volta che viene modificato un file lo salva nuovamente (compresso magari). Se invece un file non viene modificato, il file non viene aggiornato, basta aggiungere un nuovo puntatore.  Per capire se due file sono uguali, posso tranquillamente confrontare il loro hash, che mantengo sempre salvato come nome del file. Anche due file diversi ma in locazioni differenti sono salvati come puntatori allo stesso hash.
+
+\section{Git}
+Ci sono vari comandi base, non riportati qua, dei quali non verrà spiegato il funzionamento.
+Il file fondamentale di \texttt{.git} è \texttt{HEAD} che mi dice qual'è la versione sulla quale sto lavorando.\\
+I file memorizzati sono salvati con il loro hash dento \texttt{.git/objects}. Per velocizzare le perfomance, si usa il bucketing, ovvero si usano le prime due lettere del nome per raggruppare i file in cartelle. Ovviamente questi file sono compressi. I file più vecchi sono invece spostati nella cartella pack, dove non rompono le palle. Posso stampare e accedere a questi file con \texttt{git cat-file}.
+
+
+
 
 
 
