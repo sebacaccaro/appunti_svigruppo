@@ -25,17 +25,23 @@ def countedDictionary():
     counter = {}
 
     def addNew(word):
+        print("ADDNEW -->", word)
         counter[word] = 1
 
     def increase(word):
+        print("INCREASE", word)
         counter[word] = counter[word] + 1
 
     def apply(word):
-        return ((word in counter) and increase(word)) or addNew(word)
+        return ((word in counter) and (lambda x: increase(x)) or (lambda x: addNew(x)))
 
     for word in functools.reduce(operator.concat, list(reader("file.txt"))):
-        apply(word)
+        apply(word)(word)
     return counter
+
+
+def countWord():
+    [functools.reduce(operator.concat, list(reader("file.txt")))]
 
 
 print(countedDictionary())

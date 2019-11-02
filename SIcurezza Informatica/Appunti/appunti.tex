@@ -376,6 +376,77 @@ Posso creare comandi ad hoc tramite \texttt{command}. Posso fare comandi come:
 Questo command verrà eseguito ad ogni breakpoint.\\
 Quando eseguo con gdb, lo stack del mio programma viene shiftato in giù di qualche unità.
 
+\lessonDate{31 Ottobre 2019}
+\section{Memory Safety}
+\df{Memory Safety}{Insieme di meccanismi di controllo che salvaguardano la sicurezza della memoria rispetto ad attacchi come overflow ecc. \E la combinazione di \textbf{Temporal Safety} e \textbf{Spatial Safety}}
+
+La memory safety è utilizzata dalla maggior parte di tutti i linguaggi moderni.
+
+
+\subsection{Spacial Safety}
+Il concetto principale è che ogni puntatore abbia solo una determinata zona di memoria a cui può puntare e non può uscirci.\\
+Bisogna vedere i puntatori come triple:
+\begin{itemize}
+\item \textbf{p} è il puntatore vero e proprio
+\item \textbf{b} è la base della memoria
+\item \textbf{e} è la lunghezza della sezione di memoria
+\end{itemize}
+
+Posso accedere un area di memoria solo se \texttt{b $\leq$ p $\leq$ e-sizeof(typeof(p)) }. Le operazioni sul puntatore vanno a interessare solo \textbf{p}, senza toccare \textbf{b} e \textbf{e}. Tramite questo metodo, sto praticamente prevenendo i buffer overflow. L'unica downside è che ogni volta che dereferenzio un puntatore, devo eseguire i controlli.
+
+\subsection{Temporal Safety}
+Si assicura che la memoria a cui sto puntando sia ancora \textbf{definita} (= allocata). Quindi, mi impedisce di derefenziare puntatori a sezioni di memoria non allocate, evitando attacchi come \textbf{Use After Free}. Solitamente è implementata tramite una tabella che traccia le zone in uso o meno, detta \textbf{garbage collector}.
+
+\subsection{Type Safety}
+Ad ogni oggetto è associato un tipo, le operazioni eseguite devono rispettare il tipo dei puntatori. \E più forte della Memory Safety. Il controllo del tipo può essere fatto sia a compile time che a run time.
+
+\section{Tecniche di difesa}
+Esistono tecniche per eliminare del tutto o rendere più difficile l'exploitation di un certo bug. Queste tecniche vanno implementate non nel codice sorgente, ma nelle \textbf{librerie}, nel \textbf{compilatore} e nel \textbf{sistema operativo.}
+
+\subsection{Canaries (Canarini)}
+Riferimento ai canarini che si portavano nelle miniere. Il \textbf{canarino} cerca di dividere i dati utente dai dati di controllo. \E una sezione di memoria prima del \texttt{RET} che viene sovrascritto quando provo a fare un buffer overflow. Essendo il valore del canarino modificato, è possibili individuare il tentativo di exploitation. Esistono vari tipi di canarino:
+\begin{itemize}
+\item \textbf{Terminator Canaries}: Riempiti con caratteri che non posso scrivere in memoria con scanf ecc, come \texttt{CR, LF, NUL, 0 }.
+\item \textbf{Random Canaries}: Creo una stringa random e la salvo da qualche parte in memoria, poi vado a controllare che corrisponda.
+\item \textbf{Random XOR Canaries}: Come quelli random, solo che non salvo una copia ma il suo XOR.
+\end{itemize}
+
+Ogni volta che entro in una funzione \texttt{F}, eseguo i seguenti passaggi:
+\begin{itemize}
+\item Inizializzo la funzione, quindi pusho il \texttt{RET} e cose ausiliarie
+\item Genero un valore random
+\item Eseguo il push di questo valore sullo stack
+\item Salvo il valore anche in memoria
+\item ............ Eseguo il corpo della funzione............
+\item Prima di leggere il \texttt{RET}, controllo che il canarino corrisponda al valore in memoria
+\end{itemize}
+Questa tecnica, con qualche modifica, può essere usata anche contro la sovrascrittura dei metadati sullo heap.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth]{Immagini/Canary1}
+	\caption{Stack con canarino}
+\end{figure}
+
+\subsection{DEP Data Execution Prevention}
+Vengono resi lo stack e le heap non eseguibili (non dovrebbero contenere codice), e se provo a metterci dello shellcode il sistema operativo lancia un'eccezione.\\
+Quindi, come faccio ora a fare l'hackerino?
+\subsubsection{Return-to-lib-c}
+In memoria ho comunque molto codice. Nelle librerie c che vengono caricate automaticamente è presente \texttt{SYSTEM()}. Quindi, al posto del \texttt{RET} metto l'indirizzo del system, e passo \texttt{"/bin/sh"} come argomento.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{Immagini/libc}
+	\caption{Return to libc}
+\end{figure}
+
+
+\subsection{Adress space layout randomization}
+Ogni volta che ho un programma, carico le zone di memoria (HEAP, TEXT, STACK, BSS) in ordine diverso. Ho alcuni problemi:
+\begin{itemize}
+\item Shifto solo i blocchi, ms non le posizioni relative all'interno di essi.
+\item \E più applicabile alle librerie che al codice del programma vero e proprio.
+\item Funziona male con 32 bit, perchè posso fare il brute force dell'indirizzo.
+\end{itemize}
 
 
 \end{document}

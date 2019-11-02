@@ -302,7 +302,22 @@ I vecchi sistemi di versioning salvavano ogni volta i \textbf{delta} dalla versi
 Ci sono vari comandi base, non riportati qua, dei quali non verrà spiegato il funzionamento.
 Il file fondamentale di \texttt{.git} è \texttt{HEAD} che mi dice qual'è la versione sulla quale sto lavorando.\\
 I file memorizzati sono salvati con il loro hash dento \texttt{.git/objects}. Per velocizzare le perfomance, si usa il bucketing, ovvero si usano le prime due lettere del nome per raggruppare i file in cartelle. Ovviamente questi file sono compressi. I file più vecchi sono invece spostati nella cartella pack, dove non rompono le palle. Posso stampare e accedere a questi file con \texttt{git cat-file}.
-
+\lessonDate{31 Ottobre}
+Quando faccio add e poi modifico un file, la prima versione del file può rimanere memorizzata finchè git non decide di fare garbage collection.\\
+Ogni file viene compresso con:
+\begin{itemize}
+\item \textbf{Header} comprendente tipo del file e dimensione
+\item \textbf{Contenuto} del file
+\end{itemize}
+Git in realtà traccia i file in objects anche senza fare l'add. Se non vengono aggiunti, restano come dangling blobs, e vengono anche loro eliminati alla successiva garbage collection. I file che invece sono "indicizzati" sono visualizzabili da \texttt{git ls-files -s}.\\
+Attenzione che le directory vuote non vengono tracciate! \E meglio pensare al nome dei file come al loro intero percorso, ex \texttt{dir1/dir2/file.txt}, e sono questi che vengono committati.\\
+Ogni commit ha:
+\begin{itemize}
+\item Uno o più genitori (zero nel caso sono la radice)
+\item Un \texttt{tree} con i file che ha linkato
+\item Dei metadati, come committer ecc.
+\end{itemize}
+Quando committo, non vado a svuotare lo stage. Lo stage contiene tutto ciò che andrà nel prossimo commit (compresi i file già presenti).
 
 
 
