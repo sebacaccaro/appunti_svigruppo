@@ -57,6 +57,6 @@ def taylor(x, n):
 
 
 start_time = time.time()
-print(sin(1, 2))
-#print(taylor(1, 1000))
+#print(sin(1, 2))
+print(taylor(1, 1000))
 print("--- %s seconds ---" % (time.time() - start_time))

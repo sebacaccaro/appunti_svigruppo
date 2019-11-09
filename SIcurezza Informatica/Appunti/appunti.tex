@@ -448,5 +448,33 @@ Ogni volta che ho un programma, carico le zone di memoria (HEAP, TEXT, STACK, BS
 \item Funziona male con 32 bit, perchè posso fare il brute force dell'indirizzo.
 \end{itemize}
 
+\lessonDate{7 Novembre 2019}
+\section{Return-oriented Programming (ROP)}
+Attacco che usa pezzi di codice già esistenti, detti \textbf{gadget}, che vengono composti in modo \textbf{automatico} per comporre del codice malevolo. Bisogna quindi trovare i gadget e poi concatenarli insieme.\\
+Un gadget è un gruppo di istruzioni che termina sempre con un \texttt{ret}. Concateno questi gadget passando ad ogni gadget l'indirizzo del gadget successivo, attraverso le istruzioni \texttt{pop} dello stack. Alla fine, riesco sempre a trovare dei gadget, perchè l'architettura Inter x86 è CISC, ed è piena di istruzioni che possiamo usare, posso saltare in mezzo alle istruzioni, e il codice è self-reparing.\\
+Per scrivere il codice malevolo, si usa un cosidetto \textbf{ROP Compiler}. Questo tool si occupa di prendere il codice dell'attacco (scritto in C) e il programma vittima, e mi fornisce il codice assembler da inserire al momento dell'attacco.
+
+\subsection{Blind ROP}
+Attacco che ha come vittima un server remoto (linux). Non conosco l'ambiente, e quindi non so dove sono i gadget. Ci sono canarini, randomization ecc. L'idea è quella di farsi dare una copia dell'eseguibile, in modo tale da poter poi costruire  l'exploit.
+Condizioni:
+\begin{itemize}
+\item Macchina a 64 bit
+\item ASLR abilitato
+\item Canarini abilitati
+\end{itemize}
+
+Ad ogni collegamento ad un server, viene creato un thread nel server per gestire la connessione con il client. Questo thread prende le caratteristiche del processo padre, ma in caso di crash viene ricreato \textbf{senza randomizzazione}. L'attacco si svolge così:
+\begin{itemize}
+\item \textbf{Stack reading:} leggo i canarini e il return address sullo stack.
+\item Trovo i gadget che mi permetto di usare la funzione \texttt{write}.
+\item Trovo i gadget per trovare tutti gadget per costruire lo shellcode.
+\item Ora posso eseguire un rop classico.
+\end{itemize}
+Quando individuo i gadget, li divido nelle seguenti categorie:
+\begin{itemize}
+\item \textbf{Crash:} causano il crash del programma
+\item \textbf{Infinite Loop:} gadget che possono essere chiamati indefinitamente. Sono particolarmente interessato a quelli che eseguono operazioni sullo stack.
+\end{itemize}
+
 
 \end{document}

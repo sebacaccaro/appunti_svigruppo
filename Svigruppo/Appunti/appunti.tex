@@ -233,7 +233,7 @@ L'idea è di tenera traccia di cosa si è fatto e di cosa manca fare. Tendenzial
 	 \caption{Burndown Chart}
 \end{figure}
 Quello che faccio solitamente è tenere traccia dello scostamento rispetto alla pianificazione lineare.\\
-Una approsimazione per calcolare il tempo nelle ascisse è usare i giorni uomo, ad esempio per un sprint di 2 settimane con sei programmatori abbiamo \texttt{6 programmatori \textbf{x} 5 giorni a settimana \textbf{x} 2 settimane \textbf{/} 3}. Il diviso 3 serve perchè i meeting ecc portano via circa un terzo della giornata.
+Una approssimazione per calcolare il tempo nelle ascisse è usare i giorni uomo, ad esempio per un sprint di 2 settimane con sei programmatori abbiamo \texttt{6 programmatori \textbf{x} 5 giorni a settimana \textbf{x} 2 settimane \textbf{/} 3}. Il diviso 3 serve perchè i meeting ecc portano via circa un terzo della giornata.
 
 \lessonDate{24 Ottobre 2019}
 \section{Continuos Integration}
@@ -319,8 +319,16 @@ Ogni commit ha:
 \end{itemize}
 Quando committo, non vado a svuotare lo stage. Lo stage contiene tutto ciò che andrà nel prossimo commit (compresi i file già presenti).
 
+\lessonDate{5 Novembre}
+\vspace{1cm}
+HEAD è il puntatore al punto di partenza alla working directory. Attraverso il comando \texttt{git tag}, posso taggare il branch corrente con un nome a mia scelta, in modo tale da poterlo trovare più velocemente. Posso usare il comando \texttt{git checkout nomeTag} per entrare all'interno del branch.\\
+Posso riferirmi in vari modi a dei commit, come \texttt{tag}, \texttt{hash}, \texttt{HEAD} o \texttt{branch}. Posso anche riferirmi al padre (\texttt{cappuccio n}) o ad un antenato (\texttt{\textasciitilde n}).\\
+Posso \textbf{riscrivere un commit} con \texttt{git commit --amend}, dimenticandomi così di mio padre.\\
+\texttt{git reset [ref][--][files]} toglie le modifiche (fatte con \texttt{git add}) dallo stage, ma non le toglie dalla working directory. Se aggiungo \texttt{--files}, non vado a modificare la working dir, senza files sposto anche il branch puntato. Se uso \texttt{--hard}, tolgo i file anche dalla working dir. Con \texttt{--soft} non butto via ne la working dir, ne lo stage. Quindi, se puoi committo, sto praticamente facendo uno squash.
 
-
+\lessonDate{7 Novembre}
+\texttt{git revert} prende un commit precedente a quello attuale, e crea un nuovo commit che riporta al codice allo stato del suddetto commit.
+\texttt{git bisect} mi permette di effettuare la bisezione per cercare la comparsa di una modifica all'interno del codice
 
 
 

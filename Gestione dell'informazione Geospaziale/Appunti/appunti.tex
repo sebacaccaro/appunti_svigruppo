@@ -415,8 +415,91 @@ Le geometrie sono \textbf{valide} quando sono costruite correttamente in conform
 
 Posso vedere se sono valide con \texttt{ST\_isValid(Geometry)} appartenente alla classe Geometry. Alcuni sistemi hanno funzionalità aggiunte di validità ad esempio punti duplicati e linee non connesse.
 
+\lessonDate{4 Novembre}
+\section{Relazioni e Predicati Spaziali}
+Esistono vari tipi di relazioni:
+\begin{itemize}
+\item \textbf{Relazioni Metriche}: tengono conto della distanza
+\item \textbf{Relazioni Topologiche}: tengono conto della forma e della posizione degli oggetti
+\item \textbf{Relazioni di Direzioni}: non me ne frega niente
+\end{itemize}
+
+\subsection{Relazioni Metriche}
+Si basano sul concetto di \textbf{distanza}. Esistono vari concetti di distanza, come la \textbf{distanza di Manhattan}, o il camino minimo in un grafo.\\
+La distanza può essere 0 solo se due oggetti \texttt{x} e \texttt{y} sono uguali. Quindi, la distanza fra poligoni non è una distanza accettabile.\\
+Nei sistemi di dati spaziali, usiamo due distanze:
+\begin{itemize}
+\item Distanza euclidea
+\item Distanza Geodetica
+\end{itemize}
+
+\subsection{Relazioni Topografiche}
+Le proprietà topologiche sono caratteristiche che rimangono invarianti anche a seguito di deformazioni (senza strappi).
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/poliTopo}
+	\caption{Esempi di poligoni topograficamente equivalenti}
+\end{figure}
+Ad esempio un quadrato e un'ellisse sono topologicamente equivalenti, perchè posso "stendere" il quadrato in un'ellisse. Ma se metto un buco nello stesso quadrato, non è più equivalente, perchè non posso più riempire il buco.
+
+Considerando una regione topografica, abbiamo:
+\begin{itemize}
+\item \textbf{Interno} della regione
+\item \textbf{Frontiera} insieme di punti del perimetro di una regione
+\end{itemize}
+
+Dati due insiemi di punti , il fatto che un'intersezione sia vuota o non vuota è una proprietà topologica. Posso descrivere la relazione topologica fra due oggetti A e B andando a ragionare sui vari rapporti fra frontiere e interni.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Immagini/front}
+	\caption{Relazioni in rapporto alle frontiere}
+\end{figure}
+Uso quindi la matrice ottenuta per definire le varie relazioni.
+Otteniamo quindi 6 relazioni:
+\begin{itemize}
+\item equal
+\item disjoint
+\texttt covered\_by/covers
+\item overlap
+\item meet
+\item inside/contains
+\end{itemize}
+Se però voglio considerare anche i poligoni con buchi, uso il modello 9 intersection, chiamato così perchè prodotto con una matrice 3x3.\\
+Nella formulazione delle varie entità, il punto \textbf{non ha una frontiera}.\\
+Con la matrice sopraindicata, ho 512 combinazioni possibili, delle quali me ne interessano solo \textbf{56 significative} nel modello \texttt{DE-9I}.
+
+In questo modello, i valori delle celle sono:
+\begin{itemize}
+\item \textbf{T}: intersezione non vuota
+\item \textbf{F}: intersezione vuota
+\item \textbf{*}: valore non rilevante
+\item \textbf{0}: dimensione 0
+\item \textbf{1}: dimensione 1
+\item \textbf{2}: dimensione 2
+\end{itemize}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{Immagini/treTreMat}
+	\caption{Matrice dei bordi}
+\end{figure}
+Posso poi convertirle in stringa e usarle in sql. Esistono inoltre una serie di predicati utili a effettuare verifiche su relazioni. \E possibile con l'operatore \texttt{Relate(A,B,string)}, nel quale è possibile inserire un pattern custom.
+\begin{itemize}
+\item \texttt{Disjoint(A,B)}: torna true se l'intersezione di A e B è vuota
+\item \texttt{Intersect(A,B)}: negazione del disjoint
+\item \texttt{Touches(A,B)}: Due oggetti si toccano in uno o più punti ma non all'interno
+\item \texttt{Crosses(A,B)}: Gli interni di due oggetti si intersecano, ma gli oggetti non sono contenuti l'un l'altro
+\item \texttt{Within(A,B)}: A è contenuto in B
+\item \texttt{Contains(A,B)}: A contiene B
+\item \texttt{Overlaps(A,B)}: Come intersect, ma solo fra oggetti con la stessa dimensione geometrica (aree con aree, linee con linee ecc). L'intersezione deve avere la stessa dimensione geometrica degli elementi comparati. 
+\item \texttt{Equals(A,B)}: Quando due geometrie sono uguali, ovvero identificano lo stesso insieme di punti.
+\item \texttt{Relate(A,B,string)}: Lo uso per effettuare confronti con relazioni custom
+\end{itemize}
+
+Se effettuo dei join utilizzando come condizione dei dati spaziali, parlo di \textbf{join spaziale}.
+
+
 
 
 %\definition{Legge di Brooks}{Aggiungere personale ad un progetto in ritardo lo farà solo ritardare.}
 
-\end{document}
+\end{document}v 

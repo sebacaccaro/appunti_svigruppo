@@ -232,6 +232,43 @@ Per controllare l'uguaglianza fra due variabili esistono due operatori:
 
 In python il passaggio di parametri a funzione avviene sempre \textbf{per riferimento}. Fanno eccezione alcuni tipi immutabili, come interni, stringhe, e tuple, che vengono passate per valore.
 
+\lessonDate{4 Novembre}
+\section{Object Orientation}
+I linguaggi di programmazione orientati agli oggetti devono avere tre caratteristiche:
+\begin{itemize}
+\item Deve avere oggetti
+\item Deve avere classi
+\item Deve avere l'ereditarietà
+\end{itemize}
+In python le classi lasciano un po a desiderare. Posso aggiungere arbitrariamente metodi e campi dati alle istanze delle classi, come in javascript. Python è \textbf{object based}.\\
+Il problema di questo approccio è il non avere l'accesso all'oggetto \textbf{self} (this), che mi viene dato dall'ereditarietà.
+Indico i campi privati con \texttt{\_\_campoPrivato\_\_}. Definisco i metodi astratti di interfaccia con \texttt{def metodo(): pass}. Come javascript, utilizza il \textbf{duck typing}.
 
+
+\lessonDate{5 Novembre 2019}
+Ogni classe e ogni istanza in python ha un attributo \texttt{self.\_\_dict\_\_}, che contiene la lista di attributi di ogni oggetto e ogni classe. Attraverso questa caratteristica, posso fare introspezione e intercessione.\\
+In python, quando definisco i metodi di una classe, il primo parametro è sempre \texttt{self}, ovvero un riferimento esplicito al this.\\
+All'interno della classe, i metodi sono delle funzioni. Diventano metodi quando provo ad eseguirli, dovendo eseguire il binding della funzione all'istanza. Un metodo collegato è una funzione che passa l'istanza come primo parametro.
+
+\begin{figure}[H]
+\begin{lstlisting}
+>>> class D:
+...   def f(self):
+...     return "lol"
+... 
+>>> d = D()
+>>> d.f
+<bound method D.f of <__main__.D object at 0x7f68ac0d9990>>
+>>> D.f
+<function D.f at 0x7f68ac0a28c0>
+\end{lstlisting}
+\end{figure}
+
+\subsection{Ereditarietà multipla}
+Python decide dinamicamente quale dei metodi delle classi base da chiamare. Sostanzialmente python chiama tutti i metodi della gerarchia in modo che può essere sensato, senza chiamare più volte un metodo base. \texttt{Ex. Slide OOP \#7}.
+
+\subsection{Metodi speciali}
+Sono metodi come \texttt{\_\_len()\_\_}, \texttt{\_\_str()\_\_}, \texttt{\_\_lt()\_\_}, \texttt{\_\_add()\_\_}, ecc. Essendo metodi fortunelli, non posso riassegnarli a run time. Posso girarci attorno mettendo un altro metodo come valore di ritorno, e assegnando un nuovo funzionamento a questo metodo.\\
+Posso usare l'attributo \texttt{\_\_slots\_\_} per definire il tipo di attributi che gli oggetti devono all'interno di una lista sottoclassata possono avere.
 
 \end{document}
